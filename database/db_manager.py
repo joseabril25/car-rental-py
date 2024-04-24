@@ -37,7 +37,7 @@ class DBManager:
             if params:
                 cursor.execute(query, params)
             else:
-                cursor.execute(query)
+                cursor.executescript(query)
             self.conn.commit()
             return cursor
         except Error as e:

@@ -4,6 +4,8 @@ from managers.user_manager import UserManager
 from managers.cars_manager import CarManager
 from managers.rental_manager import RentalManager
 from database.db_manager import DBManager
+from database.db_manager import DBManager
+from models.user import User
 from utils.helpers import sanitize_input
 from utils.helpers import validate_date
 
@@ -13,7 +15,7 @@ class CLI:
         self.user_manager = UserManager(self.db_manager)
         self.car_manager = CarManager(self.db_manager)
         self.rental_manager = RentalManager(self.db_manager)
-        self.current_user = None
+        self.current_user = None  # Fix: Replace 'User | None' with 'None'
         self.db_manager.create_tables()
 
     def main_menu(self):
@@ -41,6 +43,7 @@ class CLI:
             user = self.user_manager.login_user(username, password)
             if user:
                 self.current_user = user
+                print(f'current user: {self.current_user}')
                 print("Login successful.")
                 self.user_dashboard()
             else:
@@ -59,7 +62,7 @@ class CLI:
             print(f"An error occurred during registration: {e}")
 
     def user_dashboard(self):
-        if self.current_user.is_admin():
+        if self.current_user.is_admin(): # type: ignore
             self.admin_dashboard()
         else:
             self.customer_dashboard()
@@ -68,15 +71,18 @@ class CLI:
         while True:
             print("\nAdmin Dashboard")
             print("1. Add Car")
-            print("2. View All Rentals")
-            print("3. Logout")
+            print("2. View All Cars")
+            print("3. View All Rentals")
+            print("4. Logout")
             choice = input("Choose an option: ")
 
             if choice == '1':
                 self.add_car()
             elif choice == '2':
-                self.view_all_rentals()
+                self.view_available_cars()
             elif choice == '3':
+                self.view_all_rentals()
+            elif choice == '4':
                 self.logout()
                 break
             else:
@@ -108,8 +114,12 @@ class CLI:
         available_now = input("Is the car available now? (yes/no): ")
         min_rent_period = input("Minimum rental period (days): ")
         max_rent_period = input("Maximum rental period (days): ")
+        if available_now.lower() == 'yes':
+            availability = 1
+        else:
+            availability = 0
         try:
-            self.car_manager.add_car(make, model, int(year), int(mileage), available_now.lower() == 'yes', int(min_rent_period), int(max_rent_period))
+            self.car_manager.add_car(make, model, int(year), int(mileage), int(availability), int(min_rent_period), int(max_rent_period))
             print("Car added successfully.")
         except Exception as e:
             print(f"Failed to add car: {e}")
@@ -124,7 +134,9 @@ class CLI:
 
     def view_available_cars(self):
         try:
-            cars = self.car_manager.get_available_cars()
+            cars = self.car_manager.get_available_cars(self.current_user.is_admin())
+            if len(cars) < 1:
+                print("No cars available.")
             for car in cars:
                 print(car)
         except Exception as e:

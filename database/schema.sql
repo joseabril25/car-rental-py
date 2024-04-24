@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS Cars (
     model TEXT NOT NULL,
     year INTEGER NOT NULL,
     mileage INTEGER,
-    available_now BOOLEAN NOT NULL,
+    available_now INTEGER NOT NULL,
     min_rent_period INTEGER NOT NULL,
     max_rent_period INTEGER NOT NULL
 );
@@ -31,3 +31,11 @@ CREATE TABLE IF NOT EXISTS Rentals (
     FOREIGN KEY(car_id) REFERENCES Cars(car_id),
     FOREIGN KEY(customer_id) REFERENCES Users(user_id)
 );
+
+-- Insert initial car data
+INSERT INTO Cars (make, model, year, mileage, available_now, min_rent_period, max_rent_period) VALUES
+('Toyota', 'Corolla', 2020, 15000, 1, 1, 30),
+('Honda', 'Civic', 2019, 20000, 1, 1, 30),
+('Ford', 'Focus', 2018, 22000, 1, 3, 45),
+('Chevrolet', 'Malibu', 2021, 5000, 1, 1, 30),
+('Tesla', 'Model 3', 2022, 10000, 1, 1, 30);
