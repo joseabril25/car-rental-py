@@ -1,10 +1,10 @@
+from database import DBManager
 
+def setup_database():
+    db_manager = DBManager('car_rental_system.db')
+    db_manager.create_tables()
+    db_manager.close()
 
-
-def main():
-    # Run main function
-    print(f'Hello, World!')
-
-
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    setup_database()
+    # Continue with application initialization and main loop
