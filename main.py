@@ -6,7 +6,7 @@ from ui.cli import CLI
 def setup_database():
     """Setup the database and create tables if they don't exist."""
     db_manager = DBManager('car_rental_system.db')
-    db_manager.create_tables()
+    db_manager.execute_script('database/schema.sql')
     db_manager.close()
 
 def main():

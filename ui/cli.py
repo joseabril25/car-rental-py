@@ -16,7 +16,7 @@ class CLI:
         self.car_manager = CarManager(self.db_manager)
         self.rental_manager = RentalManager(self.db_manager)
         self.current_user = None  # Fix: Replace 'User | None' with 'None'
-        self.db_manager.create_tables()
+        # self.db_manager.create_tables()
 
     def main_menu(self):
         while True:
@@ -137,8 +137,8 @@ class CLI:
             cars = self.car_manager.get_available_cars(self.current_user.is_admin())
             if len(cars) < 1:
                 print("No cars available.")
-            for car in cars:
-                print(car)
+            
+            self.car_manager.display_cars(cars)
         except Exception as e:
             print(f"Failed to retrieve available cars: {e}")
 

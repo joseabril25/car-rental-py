@@ -15,3 +15,11 @@ class Car:
         details = f"{self.year} {self.make} {self.model}, Mileage: {self.mileage}km"
         availability = "Available" if self.available_now else "Not Available"
         return f"{details}, {availability}"
+    
+    def __str__(self):
+        availability = "Available" if self.available_now == 1 else "Not Available"
+        return (f"Car ID: {self.car_id}, Make: {self.make}, Model: {self.model}, "
+                f"Year: {self.year}, Mileage: {f'{self.mileage:,d}'}km, "
+                f"Status: {availability}, Min Rent: {self.min_rent_period} days, "
+                f"Max Rent: {self.max_rent_period} days")
+                

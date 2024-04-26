@@ -2,6 +2,7 @@
 
 from database.db_manager import DBManager
 from models.car import Car
+from prettytable import PrettyTable
 
 class CarManager:
     def __init__(self, db_manager: DBManager):
@@ -10,8 +11,7 @@ class CarManager:
     def add_car(self, make, model, year, mileage, available_now, min_rent_period, max_rent_period):
         try:
             query = "INSERT INTO Cars (make, model, year, mileage, available_now, min_rent_period, max_rent_period) VALUES (?, ?, ?, ?, ?, ?, ?)"
-            sl = self.db_manager.execute_query(query, (make, model, year, mileage, available_now, min_rent_period, max_rent_period)).fetchone()
-            print(sl)
+            self.db_manager.execute_query(query, (make, model, year, mileage, available_now, min_rent_period, max_rent_period))
         except Exception as e:
             print(f"Error adding car: {e}")
             raise
@@ -36,16 +36,25 @@ class CarManager:
             raise
 
     def get_available_cars(self, is_admin):
-        print(is_admin)
         if is_admin:
             query = 'SELECT * FROM Cars'
         else:
             query = 'SELECT * FROM Cars WHERE available_now = 1'
         try:
-            print(query)
             cars = self.db_manager.execute_query(query,()).fetchall()
-            print(f'cars:: {cars}')
             return [Car(*car) for car in cars]
         except Exception as e:
             print(f"Error retrieving available cars: {e}")
             raise
+
+    def display_cars(self, cars):
+        table = PrettyTable()
+        table.field_names = ["Car ID", "Make", "Model", "Year", "Mileage", "Status", "Min Rent", "Max Rent"]
+
+        for car in cars:
+            availability = "Available" if car.available_now else "Not Available"
+            table.add_row([car.car_id, car.make, car.model, car.year, f"{car.mileage} km",
+            availability, f"{car.min_rent_period} days", f"{car.max_rent_period} days"])
+
+        print(table)
+            

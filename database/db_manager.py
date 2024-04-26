@@ -29,7 +29,7 @@ class DBManager:
             raise
 
     def execute_query(self, query, params=None):
-        """Execute a database query."""
+        """Execute a standard database query."""
         try:
             if not self.conn:
                 self.connect()
@@ -37,11 +37,26 @@ class DBManager:
             if params:
                 cursor.execute(query, params)
             else:
-                cursor.executescript(query)
-            self.conn.commit()
+                cursor.execute(query)
+            if 'SELECT' not in query.upper():
+                self.conn.commit()
             return cursor
-        except Error as e:
+        except sqlite3.Error as e:
             print(f"Database query failed: {e}")
+            raise
+    
+    def execute_script(self, script_path):
+        """Execute a script containing multiple SQL statements."""
+        try:
+            if not self.conn:
+                self.connect()
+            cursor = self.conn.cursor()
+            with open(script_path, 'r') as sql_file:
+                sql_script = sql_file.read()
+            cursor.executescript(sql_script)
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print(f"Error executing script: {e}")
             raise
 
     def create_tables(self):
