@@ -123,8 +123,10 @@ class CLI:
     def view_all_rentals(self):
         try:
             rentals = self.rental_manager.get_all_rentals()
-            for rental in rentals:
-                print(rental)
+            if len(rentals) < 1:
+                print(f'No Rentals Available')
+            
+            self.rental_manager.display_rentals(rentals)
         except Exception as e:
             print(f"Failed to retrieve rentals: {e}")
 
@@ -145,7 +147,7 @@ class CLI:
         try:
             validate_date(start_date)
             validate_date(end_date)
-            self.rental_manager.create_rental(car_id, self.current_user.user_id, start_date, end_date)
+            self.rental_manager.create_rental(int(car_id), self.current_user.user_id, start_date, end_date)
             print("Rental booked successfully.")
         except Exception as e:
             print(f"Failed to book rental: {e}")

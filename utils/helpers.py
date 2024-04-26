@@ -6,8 +6,8 @@ import bcrypt
 def validate_date(date_text):
     """Validate the date format YYYY-MM-DD."""
     try:
-        datetime.strptime(date_text, '%Y-%m-%d')
-        return True
+        new_date = datetime.strptime(date_text, '%Y-%m-%d').date()
+        return new_date
     except ValueError:
         return False
 
