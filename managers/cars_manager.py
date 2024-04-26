@@ -1,50 +1,53 @@
 # car_manager.py
 
-from database.db_manager import DBManager
+from database.engine import Session
 from models.car import Car
 from prettytable import PrettyTable
 
 class CarManager:
-    def __init__(self, db_manager: DBManager):
-        self.db_manager = db_manager
+    def __init__(self):
+        self.session = Session()
 
     def add_car(self, make, model, year, mileage, available_now, min_rent_period, max_rent_period):
         try:
-            query = "INSERT INTO Cars (make, model, year, mileage, available_now, min_rent_period, max_rent_period) VALUES (?, ?, ?, ?, ?, ?, ?)"
-            self.db_manager.execute_query(query, (make, model, year, mileage, available_now, min_rent_period, max_rent_period))
+            new_car = Car(make=make, model=model, year=year, mileage=mileage,
+                available_now=available_now, min_rent_period=min_rent_period, max_rent_period=max_rent_period)
+            self.session.add(new_car)
+            self.session.commit()
         except Exception as e:
             print(f"Error adding car: {e}")
+            self.session.rollback()
             raise
 
     def update_car(self, car_id, **kwargs):
         try:
-            columns = ', '.join(f"{key} = ?" for key in kwargs)
-            values = list(kwargs.values())
-            values.append(car_id)
-            query = f"UPDATE Cars SET {columns} WHERE car_id = ?"
-            self.db_manager.execute_query(query, values)
+            car = self.session.query(Car).filter(Car.car_id == car_id).one()
+            for key, value in kwargs.items():
+                setattr(car, key, value)
+            self.session.commit()
         except Exception as e:
             print(f"Error updating car: {e}")
+            self.session.rollback()
             raise
 
     def delete_car(self, car_id):
         try:
-            query = "DELETE FROM Cars WHERE car_id = ?"
-            self.db_manager.execute_query(query, (car_id,))
+            car = self.session.query(Car).filter(Car.car_id == car_id).one()
+            self.session.delete(car)
+            self.session.commit()
         except Exception as e:
             print(f"Error deleting car: {e}")
+            self.session.rollback()
             raise
 
     def get_available_cars(self, is_admin):
-        if is_admin:
-            query = 'SELECT * FROM Cars'
-        else:
-            query = 'SELECT * FROM Cars WHERE available_now = 1'
         try:
-            cars = self.db_manager.execute_query(query,()).fetchall()
-            return [Car(*car) for car in cars]
+            if is_admin:
+                return self.session.query(Car).all()
+            return self.session.query(Car).filter(Car.available_now == True).all()
         except Exception as e:
             print(f"Error retrieving available cars: {e}")
+            self.session.rollback()
             raise
 
     def display_cars(self, cars):

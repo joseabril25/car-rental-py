@@ -3,20 +3,16 @@
 from managers.user_manager import UserManager
 from managers.cars_manager import CarManager
 from managers.rental_manager import RentalManager
-from database.db_manager import DBManager
-from database.db_manager import DBManager
 from models.user import User
 from utils.helpers import sanitize_input
 from utils.helpers import validate_date
 
 class CLI:
     def __init__(self):
-        self.db_manager = DBManager('car_rental_system.db')
-        self.user_manager = UserManager(self.db_manager)
-        self.car_manager = CarManager(self.db_manager)
-        self.rental_manager = RentalManager(self.db_manager)
+        self.user_manager = UserManager()
+        self.car_manager = CarManager()
+        self.rental_manager = RentalManager()
         self.current_user = None  # Fix: Replace 'User | None' with 'None'
-        # self.db_manager.create_tables()
 
     def main_menu(self):
         while True:
@@ -44,10 +40,10 @@ class CLI:
             if user:
                 self.current_user = user
                 print(f'current user: {self.current_user}')
-                print("Login successful.")
+                print(f'\n\nLogin successful.')
                 self.user_dashboard()
             else:
-                print("Login failed. Please check your credentials.")
+                print(f'\n\nLogin failed. Please check your credentials.\n\n')
         except Exception as e:
             print(f"An error occurred during login: {e}")
 

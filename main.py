@@ -1,13 +1,23 @@
 # main.py
 
-from database.db_manager import DBManager
+from database.engine import Session, init_db
 from ui.cli import CLI
 
 def setup_database():
-    """Setup the database and create tables if they don't exist."""
-    db_manager = DBManager('car_rental_system.db')
-    db_manager.execute_script('database/schema.sql')
-    db_manager.close()
+    # Initialize database (only needed once upon first run)
+    init_db()
+
+    # Start a session to perform database operations
+    session = Session()
+    try:
+        # Perform some operations
+        # ...
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
 def main():
     """Main function to start the application."""

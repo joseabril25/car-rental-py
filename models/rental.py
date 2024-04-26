@@ -1,12 +1,15 @@
-# rental.py
+from sqlalchemy import Column, ForeignKey, Integer, String, Date
+from .base import Base
 
-class Rental:
-    def __init__(self, rental_id, car, customer, start_date, end_date):
-        self.rental_id = rental_id
-        self.car = car
-        self.customer = customer
-        self.start_date = start_date
-        self.end_date = end_date
+class Rental(Base):
+    __tablename__ = 'rentals'
+
+    rental_id = Column(Integer, primary_key=True)
+    car_id = Column(Integer, ForeignKey('cars.car_id'))
+    user_id = Column(Integer, ForeignKey('users.user_id'))
+    start_date = Column(Date)
+    end_date = Column(Date)
+    status = Column(String)  # 'pending', 'approved', 'rejected'
 
     def extend_rental(self, new_end_date):
         self.end_date = new_end_date

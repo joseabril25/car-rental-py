@@ -1,10 +1,13 @@
+from sqlalchemy import Column, Integer, String
+from .base import Base
 
-class User:
-    def __init__(self, user_id, username, hashed_password, role):
-        self.user_id = user_id
-        self.username = username
-        self.hashed_password = hashed_password
-        self.role = role
+class User(Base):
+    __tablename__ = 'users'
+
+    user_id = Column(Integer, primary_key=True)
+    username = Column(String, unique=True)
+    password = Column(String)
+    role = Column(String)  # 'customer' or 'admin'
 
     def is_admin(self):
         return self.role == 'admin'
