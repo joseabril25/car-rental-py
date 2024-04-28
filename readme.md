@@ -12,7 +12,7 @@ Before you install and run the Car Rental System, make sure you have the followi
 ### Installation
 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/car_rental_system.git
+git clone https://github.com/joseabril25/car-rental-py.git
 cd car_rental_system
 ```
 
