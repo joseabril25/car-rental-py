@@ -2,6 +2,7 @@
 from models.user import User
 from utils.helpers import hash_password, check_password
 from database.engine import DatabaseEngine
+from factories.user_factory import UserFactory
 
 class UserManager:
     def __init__(self):
@@ -9,7 +10,8 @@ class UserManager:
 
     def register_user(self, username, password, role):
         try:
-            new_user = User(username=username, password=hash_password(password), role=role)
+            # new_user = User(username=username, password=hash_password(password), role=role)
+            new_user = UserFactory.create_user(role, username, hash_password(password))
             self.session.add(new_user)
             self.session.commit()
         except Exception as e:

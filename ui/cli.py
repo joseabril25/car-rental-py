@@ -4,6 +4,7 @@ from managers.user_manager import UserManager
 from managers.cars_manager import CarManager
 from managers.rental_manager import RentalManager
 from models.user import User
+from models.car import CarType
 from utils.helpers import sanitize_input
 from utils.helpers import validate_date
 
@@ -108,14 +109,20 @@ class CLI:
         year = input("Enter car year: ")
         mileage = input("Enter car mileage: ")
         available_now = input("Is the car available now? (yes/no): ")
-        min_rent_period = input("Minimum rental period (days): ")
-        max_rent_period = input("Maximum rental period (days): ")
+        print("\nChoose a Car Type")
+        print("1. Luxury")
+        print("2. Economy")
+        print("3. SUV")
+        car_type_choice = int(input("Enter car type: "))
+
+        car_type = CarType.get_car_type_by_number(car_type_choice)
+        print(f'car_type:: {car_type}')
         if available_now.lower() == 'yes':
             availability = 1
         else:
             availability = 0
         try:
-            self.car_manager.add_car(make, model, int(year), int(mileage), int(availability), int(min_rent_period), int(max_rent_period))
+            self.car_manager.add_car(make, model, int(year), int(mileage), int(availability), car_type)
             print("Car added successfully.")
         except Exception as e:
             print(f"Failed to add car: {e}")

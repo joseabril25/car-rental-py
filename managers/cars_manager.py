@@ -3,15 +3,23 @@
 from database.engine import DatabaseEngine
 from models.car import Car
 from prettytable import PrettyTable
+from factories.car_factory import CarFactory
 
 class CarManager:
     def __init__(self):
         self.session = DatabaseEngine.get_session()
 
-    def add_car(self, make, model, year, mileage, available_now, min_rent_period, max_rent_period):
+    def add_car(self, make, model, year, mileage, available_now, car_type):
         try:
-            new_car = Car(make=make, model=model, year=year, mileage=mileage,
-                available_now=available_now, min_rent_period=min_rent_period, max_rent_period=max_rent_period)
+            new_car = CarFactory.create_car(
+                car_type=car_type, 
+                make=make, 
+                model=model, 
+                year=year, 
+                mileage=mileage, 
+                available_now=available_now)
+            
+            print(f'new car:: {new_car}')
             self.session.add(new_car)
             self.session.commit()
         except Exception as e:

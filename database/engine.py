@@ -30,7 +30,7 @@ class DatabaseEngine:
     @classmethod
     def initialize_engine(cls):
         if cls._engine is None:
-            cls._engine = create_engine(DATABASE_URL, echo=True)
+            cls._engine = create_engine(DATABASE_URL, echo=False)
             cls._Session = sessionmaker(bind=cls._engine)
             cls.init_db()  # Ensure tables are created
 
