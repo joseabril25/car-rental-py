@@ -1,12 +1,12 @@
 # car_manager.py
 
-from database.engine import Session
+from database.engine import DatabaseEngine
 from models.car import Car
 from prettytable import PrettyTable
 
 class CarManager:
     def __init__(self):
-        self.session = Session()
+        self.session = DatabaseEngine.get_session()
 
     def add_car(self, make, model, year, mileage, available_now, min_rent_period, max_rent_period):
         try:

@@ -2,12 +2,12 @@
 
 from models.rental import Rental
 from utils.helpers import validate_date
-from database.engine import Session
+from database.engine import DatabaseEngine
 from prettytable import PrettyTable
 
 class RentalManager:
     def __init__(self):
-        self.session = Session()
+        self.session = DatabaseEngine.get_session()
 
     def create_rental(self, car_id, customer_id, start_date, end_date):
         try:
