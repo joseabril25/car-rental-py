@@ -2,22 +2,22 @@
 
 import enum
 from sqlalchemy import Column, Integer, String, Boolean, Enum
-from .base import Base
+from models.base import Base
 
-class CarType(Enum):
+class CarType(enum.Enum):
     Luxury = 'Luxury'
     Economy = 'Economy'
     SUV = 'SUV'
 
-    @staticmethod
-    def get_car_type_by_number(type_num):
+    @classmethod
+    def get_car_type_by_number(cls, number):
         mapping = {
             1: CarType.Luxury,
             2: CarType.Economy,
             3: CarType.SUV
         }
 
-        return mapping.get(type_num, None)
+        return mapping.get(number, None)
 class Car(Base):
     __tablename__ = 'cars'
 
@@ -29,15 +29,13 @@ class Car(Base):
     available_now = Column(Boolean)  # Using Boolean type
     min_rent_period = Column(Integer)
     max_rent_period = Column(Integer)
-    car_type = Column(CarType)
+    car_type = Column(Enum(CarType))
 
-    @staticmethod
     def get_details(self):
         details = f"{self.year} {self.make} {self.model}, Mileage: {self.mileage}km"
         availability = "Available" if self.available_now else "Not Available"
         return f"{details}, {availability}"
     
-    @staticmethod
     def __str__(self):
         availability = "Available" if self.available_now else "Not Available"
         return (f"Car ID: {self.car_id}, Make: {self.make}, Model: {self.model}, "

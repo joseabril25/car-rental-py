@@ -19,7 +19,6 @@ class CarManager:
                 mileage=mileage, 
                 available_now=available_now)
             
-            print(f'new car:: {new_car}')
             self.session.add(new_car)
             self.session.commit()
         except Exception as e:

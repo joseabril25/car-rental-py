@@ -116,14 +116,16 @@ class CLI:
         car_type_choice = int(input("Enter car type: "))
 
         car_type = CarType.get_car_type_by_number(car_type_choice)
-        print(f'car_type:: {car_type}')
+
         if available_now.lower() == 'yes':
-            availability = 1
+            availability = True
         else:
-            availability = 0
+            availability = False
+
         try:
-            self.car_manager.add_car(make, model, int(year), int(mileage), int(availability), car_type)
-            print("Car added successfully.")
+            if car_type:
+                self.car_manager.add_car(make, model, int(year), int(mileage), int(availability), car_type)
+                print("Car added successfully.")
         except Exception as e:
             print(f"Failed to add car: {e}")
 
