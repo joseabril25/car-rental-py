@@ -1,6 +1,7 @@
 from models.user import User
 
 class UserFactory:
+
     @staticmethod
     def create_user(user_type: str, username: str, password: str) -> User:
         """Factory method to create users based on type."""

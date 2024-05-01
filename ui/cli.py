@@ -1,10 +1,13 @@
 # cli.py
 
+from factories.user_factory import UserFactory
 from managers.user_manager import UserManager
 from managers.cars_manager import CarManager
 from managers.rental_manager import RentalManager
 from models.user import User
 from models.car import CarType
+from states.global_state import GlobalState
+from ui.admin_cli import AdminCLI
 from utils.helpers import sanitize_input
 from utils.helpers import validate_date
 
@@ -14,6 +17,7 @@ class CLI:
         self.car_manager = CarManager()
         self.rental_manager = RentalManager()
         self.current_user = None  # Fix: Replace 'User | None' with 'None'
+        self.admin_cli = AdminCLI()
 
     def main_menu(self):
         while True:
@@ -40,7 +44,9 @@ class CLI:
             user = self.user_manager.login_user(username, password)
             if user:
                 self.current_user = user
-                print(f'current user: {self.current_user}')
+                GlobalState.set_current_user(user)
+                self.admin_cli.current_user = user
+                self.user_manager.current_user = user
                 print(f'\n\nLogin successful.')
                 self.user_dashboard()
             else:
@@ -60,28 +66,53 @@ class CLI:
 
     def user_dashboard(self):
         if self.current_user.is_admin(): # type: ignore
-            self.admin_dashboard()
+            self.admin_cli.admin_dashboard()
         else:
             self.customer_dashboard()
 
     def admin_dashboard(self):
         while True:
+            user = GlobalState.get_current_user()
+            print('user: ', user)
             print("\nAdmin Dashboard")
-            print("1. Add Car")
-            print("2. View All Cars")
-            print("3. View All Rentals")
+            print("1. Users Menu")
+            print("2. Cars Menu")
+            print("3. Rentals Menu")
             print("4. Logout")
             choice = input("Choose an option: ")
 
             if choice == '1':
+                self.admin_user_menu()
+            if choice == '2':
                 self.add_car()
-            elif choice == '2':
-                self.view_available_cars()
             elif choice == '3':
                 self.view_all_rentals()
             elif choice == '4':
                 self.logout()
                 break
+            else:
+                print("Invalid option. Please try again.")
+
+    def admin_user_menu(self):
+        while True:
+            print("\nUser Menu")
+            print("1. Add User")
+            print("2. View All Users")
+            print("3. Update User")
+            print("4. Delete User")
+            print("5. Exit")
+            choice = input("Choose an option: ")
+
+            if choice == '1':
+                self.add_car()
+            elif choice == '2':
+                self.admin_cli.view_all_users()
+            elif choice == '3':
+                self.view_all_rentals()
+            elif choice == '4':
+                self.view_all_rentals()
+            elif choice == '5':
+                self.admin_dashboard()
             else:
                 print("Invalid option. Please try again.")
 
