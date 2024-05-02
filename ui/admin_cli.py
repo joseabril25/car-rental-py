@@ -6,11 +6,12 @@ from models.car import CarType
 from states.global_state import GlobalState
 
 
-class AdminCLI:
-    def __init__(self, current_user=None):
+class AdminCLI():
+    def __init__(self, logout_callback, current_user=None):
         self.user_manager = UserManager()
         self.car_manager = CarManager()
         self.current_user = current_user
+        self.logout_callback = logout_callback
 
     def admin_dashboard(self):
         while True:
@@ -30,7 +31,9 @@ class AdminCLI:
             elif choice == '3':
                 self.view_all_rentals()
             elif choice == '4':
-                self.logout()
+                GlobalState.logout()
+                print(f'Logout successful. Goodbye, {user.username}!')
+                self.logout_callback()
                 break
             else:
                 print("Invalid option. Please try again.")

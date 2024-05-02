@@ -17,7 +17,7 @@ class CLI:
         self.car_manager = CarManager()
         self.rental_manager = RentalManager()
         self.current_user = None  # Fix: Replace 'User | None' with 'None'
-        self.admin_cli = AdminCLI()
+        self.admin_cli = AdminCLI(logout_callback=self.main_menu)
 
     def main_menu(self):
         while True:

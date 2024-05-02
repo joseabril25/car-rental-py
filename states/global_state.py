@@ -13,3 +13,7 @@ class GlobalState:
     @classmethod
     def get_current_user(cls):
         return cls._current_user
+    
+    @classmethod
+    def logout(cls):
+        cls._current_user = None
