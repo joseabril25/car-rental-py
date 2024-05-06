@@ -4,6 +4,7 @@ from managers.cars_manager import CarManager
 from managers.user_manager import UserManager
 from models.car import CarType
 from states.global_state import GlobalState
+from ui.cars_cli import CarsCLI
 
 
 class AdminCLI():
@@ -11,6 +12,7 @@ class AdminCLI():
         self.user_manager = UserManager()
         self.car_manager = CarManager()
         self.current_user = current_user
+        self.car_cli = CarsCLI(self.current_user)
         self.logout_callback = logout_callback
 
     def admin_dashboard(self):
@@ -74,7 +76,7 @@ class AdminCLI():
             if choice == '1':
                 self.add_car()
             elif choice == '2':
-                self.view_available_cars()
+                self.car_cli.view_available_cars()
             elif choice == '3':
                 self.view_all_rentals()
             elif choice == '4':
