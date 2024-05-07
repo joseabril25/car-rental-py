@@ -11,7 +11,7 @@ class CarManager:
 
     def add_car(self, make, model, year, mileage, available_now, car_type):
         try:
-            new_car = CarFactory.create_car(
+            new_car = CarFactory.create_or_update_car(
                 car_type=car_type, 
                 make=make, 
                 model=model, 
@@ -27,12 +27,21 @@ class CarManager:
             self.session.rollback()
             raise
 
-    def update_car(self, car_id, **kwargs):
+    def update_car(self, car_id, updated_car: Car):
         try:
             car = self.session.query(Car).filter(Car.car_id == car_id).one()
-            for key, value in kwargs.items():
-                setattr(car, key, value)
+            
+            CarFactory.create_or_update_car(
+                car=car, 
+                car_type=updated_car.car_type,
+                make=updated_car.make, 
+                model=updated_car.model, 
+                year=updated_car.year, 
+                mileage=updated_car.mileage, 
+                available_now=updated_car.available_now)
+            
             self.session.commit()
+
         except Exception as e:
             print(f"Error updating car: {e}")
             self.session.rollback()
@@ -55,6 +64,14 @@ class CarManager:
             return self.session.query(Car).filter(Car.available_now == True).all()
         except Exception as e:
             print(f"Error retrieving available cars: {e}")
+            self.session.rollback()
+            raise
+
+    def get_car(self, car_id):
+        try:
+            return self.session.query(Car).filter(Car.car_id == car_id).one()
+        except Exception as e:
+            print(f"Error retrieving car: {e}")
             self.session.rollback()
             raise
 

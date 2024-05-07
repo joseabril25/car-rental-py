@@ -1,5 +1,6 @@
 # cli.py
 
+from database.engine import DatabaseEngine
 from factories.user_factory import UserFactory
 from managers.user_manager import UserManager
 from managers.cars_manager import CarManager
@@ -18,6 +19,7 @@ class CLI:
         self.rental_manager = RentalManager()
         self.current_user = None  # Fix: Replace 'User | None' with 'None'
         self.admin_cli = AdminCLI(logout_callback=self.main_menu)
+        self.session = DatabaseEngine.get_session()
 
     def main_menu(self):
         while True:
@@ -194,6 +196,15 @@ class CLI:
 
     def logout(self):
         self.current_user = None
+        GlobalState.logout()
+        try:
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+        finally:
+            self.session.expire_all()
+            self.session.close()
+            self.session = DatabaseEngine.get_session()
         print("Logged out successfully.")
         self.main_menu()
 

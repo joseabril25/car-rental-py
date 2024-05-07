@@ -35,9 +35,9 @@ class UserManager:
 
     def get_all_users(self):
         try:
-                user = self.session.query(User).all()
-                user_table = self.display_users(user)
-                return user_table
+            user = self.session.query(User).all()
+            user_table = self.display_users(user)
+            return user_table
         except Exception as e:
             print(f"Error retrieving available cars: {e}")
             self.session.rollback()
@@ -76,7 +76,7 @@ class UserManager:
             # Update fields with provided keyword arguments
             if updated_user.username:
                 user.username = updated_user.username
-            if updated_user.password and user.password != updated_user.password:
+            if updated_user.password:
                 print('updating new password?')
                 user.password = hash_password(updated_user.password)
             if updated_user.role:
@@ -89,6 +89,7 @@ class UserManager:
         # Commit the changes to the database
 
             self.session.commit()
+            self.session.refresh(user)
             print("User updated successfully.")
             return True
         except Exception as e:

@@ -36,6 +36,9 @@ class Car(Base):
         availability = "Available" if self.available_now else "Not Available"
         return f"{details}, {availability}"
     
+    def get_car_type(self):
+        return self.car_type.name
+    
     def __str__(self):
         availability = "Available" if self.available_now else "Not Available"
         return (f"Car ID: {self.car_id}, Make: {self.make}, Model: {self.model}, "

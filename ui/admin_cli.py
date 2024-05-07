@@ -4,7 +4,7 @@ from managers.cars_manager import CarManager
 from managers.user_manager import UserManager
 from models.car import CarType
 from states.global_state import GlobalState
-
+from utils.helpers import sanitize_input
 
 class AdminCLI():
     def __init__(self, logout_callback, current_user=None):
@@ -16,7 +16,7 @@ class AdminCLI():
     def admin_dashboard(self):
         while True:
             user = GlobalState.get_current_user()
-            print('user: ', user)
+
             print("\nAdmin Dashboard")
             print("1. Users Menu")
             print("2. Cars Menu")
@@ -31,7 +31,6 @@ class AdminCLI():
             elif choice == '3':
                 self.view_all_rentals()
             elif choice == '4':
-                GlobalState.logout()
                 print(f'Logout successful. Goodbye, {user.username}!')
                 self.logout_callback()
                 break
@@ -49,7 +48,7 @@ class AdminCLI():
             choice = input("Choose an option: ")
 
             if choice == '1':
-                self.add_car()
+                self.add_user()
             elif choice == '2':
                 self.view_all_users()
             elif choice == '3':
@@ -63,7 +62,7 @@ class AdminCLI():
 
     def admin_cars_menu(self):
         while True:
-            print("\nUsers Menu")
+            print("\nCars Menu")
             print("1. Add Cars")
             print("2. View All Cars")
             print("3. Update Cars")
@@ -77,7 +76,7 @@ class AdminCLI():
                 self.view_available_cars()
             elif choice == '3':
                 # self.update_user()
-                print('to do == update car')
+                self.update_car()
             elif choice == '4':
                 self.delete_car()
             elif choice == '5':
@@ -87,6 +86,15 @@ class AdminCLI():
 
     
     # USERS METHODS
+    def add_user(self):
+        username = sanitize_input(input("Enter username: "))
+        password = sanitize_input(input("Enter password: "))
+        role = input("Enter role (admin/customer): ")
+        try:
+            self.user_manager.register_user(username, password, role)
+            print("User added successfully.")
+        except Exception as e:
+            print(f"An error occurred during registration: {e}")
     def view_all_users(self):
         try:
             if not self.current_user.is_admin():
@@ -167,6 +175,70 @@ class AdminCLI():
                 print("Car added successfully.")
         except Exception as e:
             print(f"Failed to add car: {e}")
+
+    def update_car(self):
+        self.view_available_cars()
+
+        while True:
+            car_id = input("Enter car ID: ")
+
+            if car_id.lower() == 'exit':
+                print('Exiting update process')
+                break
+
+            if not car_id.isdigit():
+                print("Invalid input. Please enter a valid numeric car ID.")
+                continue
+                
+            try:
+                car = self.car_manager.get_car(int(car_id))
+
+                if not car:
+                    print("Car not found.")
+                    break
+                
+                make = input(f"Enter new make or press enter to keep ({car.make}): ")
+                model = input(f"Enter new model or press enter to keep ({car.model}): ")
+                year = input(f"Enter new year or press enter to keep ({car.year}): ")
+                mileage = input(f"Enter new mileage or press enter to keep ({car.mileage}): ")
+                available_now = input(f"Is the car available now? (yes/no) or press enter to keep ({car.available_now}): ")
+
+                print("\nChoose a Car Type")
+                print("1. Luxury")
+                print("2. Economy")
+                print("3. SUV")
+
+                car_type_choice = input(f"Enter car type or press enter to keep ({car.car_type.name}): ")
+
+                if car_type_choice.isdigit():
+                    car_type = CarType.get_car_type_by_number(car_type_choice)
+                else:
+                    car_type = car.car_type
+
+                if available_now.lower() == 'yes':
+                    availability = True
+                else:
+                    availability = False
+
+                if make:
+                    car.make = make
+                if model:
+                    car.model = model
+                if year:
+                    car.year = year
+                if mileage:
+                    car.mileage = mileage
+                if available_now:
+                    car.available_now = availability
+                if car_type_choice:
+                    car.car_type = car_type
+            
+                self.car_manager.update_car(car_id, car)
+                print("Car updated successfully.")
+                break
+            except Exception as e:
+                print(f"Failed to add car: {e}")
+                break
 
     def view_available_cars(self):
         try:
