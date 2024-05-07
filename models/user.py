@@ -13,4 +13,4 @@ class User(Base):
         return self.role == 'admin'
 
     def __str__(self):
-        return f"User({self.username}, {self.role})"
+        return f"User({self.username}, {self.password} ,{self.role})"

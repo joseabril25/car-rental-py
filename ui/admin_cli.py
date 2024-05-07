@@ -53,9 +53,9 @@ class AdminCLI():
             elif choice == '2':
                 self.view_all_users()
             elif choice == '3':
-                self.view_all_rentals()
+                self.update_user()
             elif choice == '4':
-                self.view_all_rentals()
+                self.delete_user()
             elif choice == '5':
                 self.admin_dashboard()
             else:
@@ -76,14 +76,17 @@ class AdminCLI():
             elif choice == '2':
                 self.view_available_cars()
             elif choice == '3':
-                self.view_all_rentals()
+                # self.update_user()
+                print('to do == update car')
             elif choice == '4':
-                self.view_all_rentals()
+                self.delete_car()
             elif choice == '5':
                 self.admin_dashboard()
             else:
                 print("Invalid option. Please try again.")
 
+    
+    # USERS METHODS
     def view_all_users(self):
         try:
             if not self.current_user.is_admin():
@@ -93,6 +96,48 @@ class AdminCLI():
             print(user_table)
         except Exception as e:
             print(f"An error occurred: {e}")
+
+    def delete_user(self):
+        try:
+            user_id = input("Enter user ID: ")
+            self.user_manager.delete_user(user_id)
+            print("User deleted successfully.")
+        except Exception as e:
+            print(f"Failed to delete user: {e}")
+
+    def update_user(self):
+        try:
+            # Check if user is admin
+            if not self.current_user.is_admin():
+                print("You do not have permission to view all users.")
+                return
+            # Get all users and show options
+            user_table = self.user_manager.get_all_users()
+            print(user_table)
+
+            user_id = int(input("Enter user ID: "))
+            #check if user exists
+            user = self.user_manager.get_user_by_id(user_id)
+            if not user:
+                print("User not found.")
+                return
+            
+            # Get new user details
+            username = input("Enter new username or press enter to keep: ")
+            password = input("Enter new password or press enter to keep: ")
+            role = input("Enter new role or press enter to keep (admin/customer): ")
+
+            if username:
+                user.username = username
+            if password:
+                user.password = password
+            if role:
+                user.role = role
+
+            self.user_manager.update_user(user_id, user)
+            print("User updated successfully.")
+        except Exception as e:
+            print(f"Failed to update user: {e}")
 
 
     # CARS METHODS
@@ -132,3 +177,11 @@ class AdminCLI():
             self.car_manager.display_cars(cars)
         except Exception as e:
             print(f"Failed to retrieve available cars: {e}")
+
+    def delete_car(self):
+        try:
+            car_id = input("Enter car ID: ")
+            self.car_manager.delete_car(car_id)
+            print("Car deleted successfully.")
+        except Exception as e:
+            print(f"Failed to delete car: {e}")

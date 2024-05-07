@@ -43,6 +43,60 @@ class UserManager:
             self.session.rollback()
             raise
 
+    def get_user_by_id(self, user_id):
+        try:
+            user = self.session.query(User).filter(User.user_id == user_id).one()
+            return user
+        except Exception as e:
+            print(f"Error retrieving user: {e}")
+            self.session.rollback()
+            raise
+    
+    def delete_user(self, user_id: int):
+        try:
+            user = self.session.query(User).filter(User.user_id == user_id).one()
+            self.session.delete(user)
+            self.session.commit()
+        except Exception as e:
+            print(f"Error deleting user: {e}")
+            self.session.rollback()
+            raise
+
+    def update_user(self, user_id: int, updated_user: User):
+        # Fetch the user from the database
+        try:
+            user = self.session.query(User).filter(User.user_id == user_id).one()
+            if not user:
+                print("User not found")
+                return False
+            
+            print(f'User : {user.password}')
+            print(f'Updated User : {updated_user}')
+
+            # Update fields with provided keyword arguments
+            if updated_user.username:
+                user.username = updated_user.username
+            if updated_user.password and user.password != updated_user.password:
+                print('updating new password?')
+                user.password = hash_password(updated_user.password)
+            if updated_user.role:
+                user.role = updated_user.role
+
+            print(f'User type: {type(user.username)}')
+            print(f'Password type: {type(user.password)}')
+            print(f'Role type: {type(user.role)}')
+
+        # Commit the changes to the database
+
+            self.session.commit()
+            print("User updated successfully.")
+            return True
+        except Exception as e:
+            self.session.rollback()
+            print(f"Failed to update user: {e}")
+            return False
+
+
     def display_users(self, users):
         table = PrettyTable()
         table.field_names = ["User ID", "Username", "User Role"]
