@@ -55,7 +55,7 @@ class CustomerCLI():
                 # self.admin_cars_menu()
             elif choice == '3':
                 print('rent a car')
-                # self.view_all_rentals()
+                self.book_rental()
             elif choice == '4':
                 print('show account')
                 # self.view_all_rentals()
@@ -89,12 +89,18 @@ class CustomerCLI():
             print(f"Failed to retrieve rentals: {e}")
 
     def book_rental(self):
-        car_id = sanitize_input(input("Enter car ID: "))
-        start_date = sanitize_input(input("Enter start date (YYYY-MM-DD): "))
-        end_date = sanitize_input(input("Enter end date (YYYY-MM-DD): "))
+        cars = self.car_manager.get_available_cars(self.current_user.is_admin())
+        if len(cars) < 1:
+            print("No cars available.")
+        else:
+            self.car_manager.display_cars(cars)
 
-        try:
-            self.rental_manager.create_rental(car_id, self.current_user.user_id, start_date, end_date)
-            print("Rental created successfully.")
-        except Exception as e:
-            print(f"Failed to create rental: {e}")
+            car_id = sanitize_input(input("Enter car ID: "))
+            start_date = sanitize_input(input("Enter start date (YYYY-MM-DD): "))
+            end_date = sanitize_input(input("Enter end date (YYYY-MM-DD): "))
+
+            try:
+                self.rental_manager.create_rental(car_id, self.current_user.user_id, start_date, end_date)
+                print("Rental created successfully.")
+            except Exception as e:
+                print(f"Failed to create rental: {e}")

@@ -9,6 +9,7 @@ class Rental(Base):
     user_id = Column(Integer, ForeignKey('users.user_id'))
     start_date = Column(Date)
     end_date = Column(Date)
+    price = Column(Integer)
     status = Column(String)  # 'pending', 'approved', 'rejected'
 
     def extend_rental(self, new_end_date):

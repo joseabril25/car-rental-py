@@ -67,7 +67,7 @@ class CarManager:
             self.session.rollback()
             raise
 
-    def get_car(self, car_id):
+    def get_car(self, car_id) -> Car:
         try:
             return self.session.query(Car).filter(Car.car_id == car_id).one()
         except Exception as e:

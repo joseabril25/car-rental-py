@@ -1,6 +1,9 @@
 from datetime import datetime
 
+from managers.cars_manager import CarManager
+from models.car import Car
 from models.rental import Rental
+from utils.helpers import validate_date
 
 class RentalFactory:
     @staticmethod
@@ -18,10 +21,12 @@ class RentalFactory:
         Returns:
         Rental: The newly created Rental object.
         """
-        if isinstance(start_date, str):
-            start_date = datetime.strptime(start_date, '%Y-%m-%d')
-        if isinstance(end_date, str):
-            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+        car = CarManager.get_car(car_id)  # Assuming CarManager can fetch cars
+        if not car:
+            raise ValueError("Car not found")
+
+        if not RentalFactory.validate_dates(start_date, end_date, car):
+            raise ValueError("Invalid rental period")
         
         # Validate the rental dates
         if start_date >= end_date:
@@ -51,3 +56,12 @@ class RentalFactory:
         # Additional validation or processing can be added here
         
         return rental
+    
+    @staticmethod
+    def validate_dates(start_date, end_date, car: Car):
+        """Check if the rental period is within allowed limits."""
+        verified_start_date = validate_date(start_date)
+        verified_end_date = validate_date(end_date)
+
+        rental_duration = (verified_end_date - verified_start_date).days
+        return car.min_rent_period <= rental_duration <= car.max_rent_period

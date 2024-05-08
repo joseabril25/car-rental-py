@@ -12,9 +12,7 @@ class RentalManager:
 
     def create_rental(self, car_id, customer_id, start_date, end_date):
         try:
-            verified_start_date = validate_date(start_date)
-            verified_end_date = validate_date(end_date)
-            new_rental = RentalFactory.create_rental(car_id, customer_id, verified_start_date, verified_end_date)
+            new_rental = RentalFactory.create_rental(car_id, customer_id, start_date=start_date, end_date=end_date)
             self.session.add(new_rental)
             self.session.commit()
         except Exception as e:
