@@ -18,6 +18,17 @@ class CarType(enum.Enum):
         }
 
         return mapping.get(number, None)
+    
+class PricingService:
+    _pricing_per_day = {
+        CarType.Luxury: 150,   # $150 per day for luxury cars
+        CarType.Economy: 75,   # $75 per day for economy cars
+        CarType.SUV: 100       # $100 per day for SUVs
+    }
+
+    @staticmethod
+    def get_daily_rate(car_type):
+        return PricingService._pricing_per_day.get(car_type, 0) # Return 0 if car type not found
 class Car(Base):
     __tablename__ = 'cars'
 
@@ -44,5 +55,7 @@ class Car(Base):
         return (f"Car ID: {self.car_id}, Make: {self.make}, Model: {self.model}, "
                 f"Year: {self.year}, Mileage: {f'{self.mileage:,d}'}km, "
                 f"Status: {availability}, Min Rent: {self.min_rent_period} days, "
-                f"Max Rent: {self.max_rent_period} days")
+                f"Max Rent: {self.max_rent_period} days"
+                f"Car Type: {self.car_type}"
+                f"Daily Rate: {self.daily_rate}")
     

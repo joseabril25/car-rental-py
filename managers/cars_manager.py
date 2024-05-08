@@ -77,12 +77,12 @@ class CarManager:
 
     def display_cars(self, cars):
         table = PrettyTable()
-        table.field_names = ["Car ID", "Make", "Model", "Year", "Mileage", "Status", "Min Rent", "Max Rent"]
+        table.field_names = ["Car ID", "Make", "Model", "Year", "Mileage", "Status", "Min Rent", "Max Rent", "Type", "Daily Rate"]
 
         for car in cars:
             availability = "Available" if car.available_now else "Not Available"
             table.add_row([car.car_id, car.make, car.model, car.year, f"{car.mileage} km",
-            availability, f"{car.min_rent_period} days", f"{car.max_rent_period} days"])
+            availability, f"{car.min_rent_period} days", f"{car.max_rent_period} days", car.car_type.name, f"${car.daily_rate}"])
 
         print(table)
             

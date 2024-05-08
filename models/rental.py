@@ -11,6 +11,7 @@ class Rental(Base):
     end_date = Column(Date)
     price = Column(Integer)
     status = Column(String)  # 'pending', 'approved', 'rejected'
+    cost = Column(Integer)
 
     def extend_rental(self, new_end_date):
         self.end_date = new_end_date

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from managers.cars_manager import CarManager
-from models.car import Car
+from models.car import Car, PricingService
 from models.rental import Rental
 from utils.helpers import validate_date
 
@@ -32,8 +32,10 @@ class RentalFactory:
         if start_date >= end_date:
             raise ValueError("End date must be after start date.")
         
+        rate = PricingService.get_daily_rate(car.car_type)
+        cost = RentalFactory.calculate_cost(start_date, end_date, rate)
         # Create and return the new Rental instance
-        return Rental(car_id=car_id, user_id=user_id, start_date=start_date, end_date=end_date, status=status)
+        return Rental(car_id=car_id, user_id=user_id, start_date=start_date, end_date=end_date, status=status, cost=cost)
 
     @staticmethod
     def update_rental(rental, **kwargs):
@@ -65,3 +67,11 @@ class RentalFactory:
 
         rental_duration = (verified_end_date - verified_start_date).days
         return car.min_rent_period <= rental_duration <= car.max_rent_period
+    
+    @staticmethod
+    def calculate_cost(start_date, end_date, rate: int):
+        verified_start_date = validate_date(start_date)
+        verified_end_date = validate_date(end_date)
+        """Calculate the total cost of the rental."""
+        days = (verified_end_date - verified_start_date).days
+        return days * rate
