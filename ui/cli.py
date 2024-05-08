@@ -9,6 +9,7 @@ from models.user import User
 from models.car import CarType
 from states.global_state import GlobalState
 from ui.admin_cli import AdminCLI
+from ui.customer_cli import CustomerCLI
 from utils.helpers import sanitize_input
 from utils.helpers import validate_date
 
@@ -19,10 +20,12 @@ class CLI:
         self.rental_manager = RentalManager()
         self.current_user = None  # Fix: Replace 'User | None' with 'None'
         self.admin_cli = AdminCLI(logout_callback=self.main_menu)
+        self.customer_cli = CustomerCLI(logout_callback=self.main_menu)
         self.session = DatabaseEngine.get_session()
 
     def main_menu(self):
-        while True:
+        is_running = True
+        while is_running:
             print("\nWelcome to the Car Rental System")
             print("1. Login")
             print("2. Register")
@@ -35,7 +38,8 @@ class CLI:
                 self.register()
             elif choice == '3':
                 print("Exiting system.")
-                break
+                is_running = False
+                continue
             else:
                 print("Invalid option. Please try again.")
 
@@ -47,10 +51,9 @@ class CLI:
             if user:
                 self.current_user = user
                 GlobalState.set_current_user(user)
-                self.admin_cli.current_user = user
                 self.user_manager.current_user = user
                 print(f'\n\nLogin successful.')
-                self.user_dashboard()
+                self.user_dashboard(user)
             else:
                 print(f'\n\nLogin failed. Please check your credentials.\n\n')
         except Exception as e:
@@ -66,11 +69,13 @@ class CLI:
         except Exception as e:
             print(f"An error occurred during registration: {e}")
 
-    def user_dashboard(self):
+    def user_dashboard(self, user):
         if self.current_user.is_admin(): # type: ignore
+            self.admin_cli.current_user = user
             self.admin_cli.admin_dashboard()
         else:
-            self.customer_dashboard()
+            self.customer_cli.current_user = user
+            self.customer_cli.customer_dashboard()
 
     def admin_dashboard(self):
         while True:
@@ -172,15 +177,7 @@ class CLI:
         except Exception as e:
             print(f"Failed to retrieve rentals: {e}")
 
-    def view_available_cars(self):
-        try:
-            cars = self.car_manager.get_available_cars(self.current_user.is_admin())
-            if len(cars) < 1:
-                print("No cars available.")
-            
-            self.car_manager.display_cars(cars)
-        except Exception as e:
-            print(f"Failed to retrieve available cars: {e}")
+    
 
     def book_rental(self):
         car_id = input("Enter the car ID: ")

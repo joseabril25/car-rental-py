@@ -33,7 +33,7 @@ class AdminCLI():
             elif choice == '4':
                 print(f'Logout successful. Goodbye, {user.username}!')
                 self.logout_callback()
-                break
+                continue
             else:
                 print("Invalid option. Please try again.")
 
@@ -180,7 +180,7 @@ class AdminCLI():
         self.view_available_cars()
 
         while True:
-            car_id = input("Enter car ID: ")
+            car_id = input("Enter car ID or type exit: ")
 
             if car_id.lower() == 'exit':
                 print('Exiting update process')
