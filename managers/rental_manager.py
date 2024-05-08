@@ -1,5 +1,6 @@
 # rental_manager.py
 
+from factories.rental_factory import RentalFactory
 from models.rental import Rental
 from utils.helpers import validate_date
 from database.engine import DatabaseEngine
@@ -13,7 +14,7 @@ class RentalManager:
         try:
             verified_start_date = validate_date(start_date)
             verified_end_date = validate_date(end_date)
-            new_rental = Rental(car_id=car_id, user_id=customer_id, start_date=verified_start_date, end_date=verified_end_date, status='pending')
+            new_rental = RentalFactory.create_rental(car_id, customer_id, verified_start_date, verified_end_date)
             self.session.add(new_rental)
             self.session.commit()
         except Exception as e:
@@ -31,9 +32,9 @@ class RentalManager:
             self.session.rollback()
             raise
 
-    def get_all_rentals(self):
+    def get_all_rentals(self, user_id):
         try:
-            return self.session.query(Rental).all()
+            return self.session.query(Rental).filter(Rental.user_id == user_id).all()
         except Exception as e:
             print(f'Error fetching all rentals: {e}')
             self.session.rollback()
