@@ -4,6 +4,7 @@ from database.engine import DatabaseEngine
 from models.car import Car
 from prettytable import PrettyTable
 from factories.car_factory import CarFactory
+from services.pricing_service import PricingService
 
 class CarManager:
     def __init__(self):
@@ -82,7 +83,7 @@ class CarManager:
         for car in cars:
             availability = "Available" if car.available_now else "Not Available"
             table.add_row([car.car_id, car.make, car.model, car.year, f"{car.mileage} km",
-            availability, f"{car.min_rent_period} days", f"{car.max_rent_period} days", car.car_type.name, f"${car.daily_rate}"])
+            availability, f"{car.min_rent_period} days", f"{car.max_rent_period} days", car.car_type.name, f"${PricingService.get_daily_rate(car.car_type)}"])
 
         print(table)
             

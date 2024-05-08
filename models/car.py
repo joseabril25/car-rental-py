@@ -56,6 +56,5 @@ class Car(Base):
                 f"Year: {self.year}, Mileage: {f'{self.mileage:,d}'}km, "
                 f"Status: {availability}, Min Rent: {self.min_rent_period} days, "
                 f"Max Rent: {self.max_rent_period} days"
-                f"Car Type: {self.car_type}"
-                f"Daily Rate: {self.daily_rate}")
+                f"Car Type: {self.car_type}")
     

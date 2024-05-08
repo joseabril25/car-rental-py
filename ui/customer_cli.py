@@ -79,7 +79,7 @@ class CustomerCLI():
     # rental methods
     def view_all_rentals(self):
         try:
-            rentals = self.rental_manager.get_all_rentals(self.current_user.user_id)
+            rentals = self.rental_manager.get_all_rentals_by_id(self.current_user.user_id)
 
             if len(rentals) < 1:
                 print("No rentals available.")

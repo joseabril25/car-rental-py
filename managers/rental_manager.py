@@ -22,15 +22,23 @@ class RentalManager:
 
     def update_rental_status(self, rental_id, status):
         try:
-            car = self.session.query(Rental).filter(Rental.rental_id == rental_id).one()
-            setattr(car, 'status', status)
+            rental = self.session.query(Rental).filter(Rental.rental_id == rental_id).one()
+            setattr(rental, 'status', status)
             self.session.commit()
         except Exception as e:
             print(f"Error updating rental status: {e}")
             self.session.rollback()
             raise
 
-    def get_all_rentals(self, user_id):
+    def get_all_rentals(self):
+        try:
+            return self.session.query(Rental).all()
+        except Exception as e:
+            print(f'Error fetching all rentals: {e}')
+            self.session.rollback()
+            raise
+
+    def get_all_rentals_by_id(self, user_id):
         try:
             return self.session.query(Rental).filter(Rental.user_id == user_id).all()
         except Exception as e:

@@ -10,7 +10,7 @@ class Rental(Base):
     start_date = Column(Date)
     end_date = Column(Date)
     price = Column(Integer)
-    status = Column(String)  # 'pending', 'approved', 'rejected'
+    status = Column(Integer)  # 0 ='pending', 1='approved', 2='rejected'
     cost = Column(Integer)
 
     def extend_rental(self, new_end_date):

@@ -1,13 +1,15 @@
 from datetime import datetime
 
 from managers.cars_manager import CarManager
-from models.car import Car, PricingService
+
+from models.car import Car
 from models.rental import Rental
+from services.pricing_service import PricingService
 from utils.helpers import validate_date
 
 class RentalFactory:
     @staticmethod
-    def create_rental(car_id, user_id, start_date, end_date, status='pending'):
+    def create_rental(car_id, user_id, start_date, end_date, status=0):
         """
         Creates a new Rental instance with the given parameters.
 

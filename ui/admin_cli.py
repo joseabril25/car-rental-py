@@ -1,6 +1,7 @@
 
 from factories.user_factory import UserFactory
 from managers.cars_manager import CarManager
+from managers.rental_manager import RentalManager
 from managers.user_manager import UserManager
 from models.car import CarType
 from states.global_state import GlobalState
@@ -10,6 +11,7 @@ class AdminCLI():
     def __init__(self, logout_callback, current_user=None):
         self.user_manager = UserManager()
         self.car_manager = CarManager()
+        self.rental_manager = RentalManager()
         self.current_user = current_user
         self.logout_callback = logout_callback
 
@@ -29,7 +31,7 @@ class AdminCLI():
             if choice == '2':
                 self.admin_cars_menu()
             elif choice == '3':
-                self.view_all_rentals()
+                self.admin_rental_menu()
             elif choice == '4':
                 print(f'Logout successful. Goodbye, {user.username}!')
                 self.logout_callback()
@@ -74,6 +76,29 @@ class AdminCLI():
                 self.add_car()
             elif choice == '2':
                 self.view_available_cars()
+            elif choice == '3':
+                # self.update_user()
+                self.update_car()
+            elif choice == '4':
+                self.delete_car()
+            elif choice == '5':
+                self.admin_dashboard()
+            else:
+                print("Invalid option. Please try again.")
+
+    def admin_rental_menu(self):
+        while True:
+            print("\nRentals Menu")
+            print("1. View Rentals")
+            print("2. Approve/Deny Rentals")
+            print("3. Update Cars")
+            print("4. Exit")
+            choice = input("Choose an option: ")
+
+            if choice == '1':
+                self.view_all_rentals()
+            elif choice == '2':
+                self.update_rental_status()
             elif choice == '3':
                 # self.update_user()
                 self.update_car()
@@ -257,3 +282,35 @@ class AdminCLI():
             print("Car deleted successfully.")
         except Exception as e:
             print(f"Failed to delete car: {e}")
+
+
+    # RENTAL METHODS
+    def view_all_rentals(self):
+        try:
+            rentals = self.rental_manager.get_all_rentals()
+
+            if len(rentals) < 1:
+                print("No rentals available.")
+                return False
+            else:
+                self.rental_manager.display_rentals(rentals)
+                return True
+        except Exception as e:
+            print(f"Failed to retrieve rentals: {e}")
+
+    def update_rental_status(self):
+        try:
+            is_rental_empty = self.view_all_rentals()
+
+            if not is_rental_empty:
+                return
+
+            rental_id = input("Enter rental ID: ")
+            print('Choose status:')
+            print('1. Approve')
+            print('2. Reject')
+            status = input("Enter status (approved/rejected): ")
+
+            self.rental_manager.update_rental_status(rental_id, status)
+        except Exception as e:
+            print(f"Failed to retrieve rentals: {e}")
