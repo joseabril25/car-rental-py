@@ -3,13 +3,13 @@ from datetime import datetime
 from managers.cars_manager import CarManager
 
 from models.car import Car
-from models.rental import Rental
+from models.rental import Rental, RentalStatus
 from services.pricing_service import PricingService
-from utils.helpers import validate_date
+from utils.helpers import convert_string_to_date, validate_date
 
 class RentalFactory:
     @staticmethod
-    def create_rental(car_id, user_id, start_date, end_date, status=0):
+    def create_rental(car, car_id, user_id, start_date, end_date):
         """
         Creates a new Rental instance with the given parameters.
 
@@ -23,9 +23,6 @@ class RentalFactory:
         Returns:
         Rental: The newly created Rental object.
         """
-        car = CarManager.get_car(car_id)  # Assuming CarManager can fetch cars
-        if not car:
-            raise ValueError("Car not found")
 
         if not RentalFactory.validate_dates(start_date, end_date, car):
             raise ValueError("Invalid rental period")
@@ -36,8 +33,15 @@ class RentalFactory:
         
         rate = PricingService.get_daily_rate(car.car_type)
         cost = RentalFactory.calculate_cost(start_date, end_date, rate)
+
         # Create and return the new Rental instance
-        return Rental(car_id=car_id, user_id=user_id, start_date=start_date, end_date=end_date, status=status, cost=cost)
+        return Rental(
+            car_id=car_id, 
+            user_id=user_id, 
+            start_date=convert_string_to_date(start_date), 
+            end_date=convert_string_to_date(end_date), 
+            status=RentalStatus.Pending, 
+            cost=cost)
 
     @staticmethod
     def update_rental(rental, **kwargs):

@@ -2,6 +2,7 @@
 
 import enum
 from sqlalchemy import Column, Float, Integer, String, Boolean, Enum
+from sqlalchemy.orm import relationship
 from models.base import Base
 
 class CarType(enum.Enum):

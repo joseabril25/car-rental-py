@@ -22,3 +22,18 @@ def check_password(password, hashed):
 def sanitize_input(text):
     """Basic sanitation for text inputs to avoid SQL injection and XSS attacks."""
     return re.sub(r'[^\w\s]', '', text)
+
+def convert_string_to_date(date_string):
+    """
+    Convert a date string in the format 'YYYY-MM-DD' to a datetime.date object.
+
+    Args:
+        date_string (str): The date string to convert.
+
+    Returns:
+        datetime.date: The converted date object.
+    """
+    try:
+        return datetime.strptime(date_string, '%Y-%m-%d').date()
+    except ValueError:
+        raise ValueError("Invalid date format. Please use 'YYYY-MM-DD'.")

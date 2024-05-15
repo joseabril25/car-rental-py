@@ -1,7 +1,7 @@
 # rental_manager.py
 
 from factories.rental_factory import RentalFactory
-from models.rental import Rental
+from models.rental import Rental, RentalStatus
 from utils.helpers import validate_date
 from database.engine import DatabaseEngine
 from prettytable import PrettyTable
@@ -10,9 +10,9 @@ class RentalManager:
     def __init__(self):
         self.session = DatabaseEngine.get_session()
 
-    def create_rental(self, car_id, customer_id, start_date, end_date):
+    def create_rental(self, car, car_id, customer_id, start_date, end_date):
         try:
-            new_rental = RentalFactory.create_rental(car_id=car_id, user_id=customer_id, start_date=start_date, end_date=end_date)
+            new_rental = RentalFactory.create_rental(car=car, car_id=car_id, user_id=customer_id, start_date=start_date, end_date=end_date)
             self.session.add(new_rental)
             self.session.commit()
         except Exception as e:
@@ -48,10 +48,20 @@ class RentalManager:
 
     def display_rentals(self, rentals):
         table = PrettyTable()
-        table.field_names = ["Rental ID", "Car ID", "User ID", "Start Date", "End Date", "Status"]
+        table.field_names = ["Rental ID", "Car", "User", "Start Date", "End Date", "Status"]
 
         rental: Rental
         for rental in rentals:
-            table.add_row([rental.rental_id, rental.car_id, rental.user_id, rental.start_date, rental.end_date, rental.status])
+            car_plate = rental.car.plate_number if rental.car else "No Car"
+            username = rental.user.username if rental.user else "No User"
+            status_description = rental.get_status_description()
+            table.add_row([
+                rental.rental_id, 
+                car_plate, 
+                username, 
+                rental.start_date.strftime('%b %d, %Y'), 
+                rental.end_date.strftime('%b %d, %Y'), 
+                status_description
+                ])
 
         print(table)

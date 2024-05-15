@@ -96,11 +96,15 @@ class CustomerCLI():
             self.car_manager.display_cars(cars)
 
             car_id = sanitize_input(input("Enter car ID: "))
-            start_date = sanitize_input(input("Enter start date (YYYY-MM-DD): "))
-            end_date = sanitize_input(input("Enter end date (YYYY-MM-DD): "))
+            start_date = input("Enter start date (YYYY-MM-DD): ")
+            end_date = input("Enter end date (YYYY-MM-DD): ")
 
             try:
-                self.rental_manager.create_rental(car_id, self.current_user.user_id, start_date, end_date)
+                car = self.car_manager.get_car(car_id)
+                if not car:
+                    print("Car not found.")
+                    return
+                self.rental_manager.create_rental(car, car_id, self.current_user.user_id, start_date, end_date)
                 print("Rental created successfully.")
             except Exception as e:
                 print(f"Failed to create rental: {e}")
