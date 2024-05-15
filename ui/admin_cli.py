@@ -176,12 +176,12 @@ class AdminCLI():
     # CARS METHODS
 
     def add_car(self):
-        make = input("Enter car make: ")
-        model = input("Enter car model: ")
-        year = input("Enter car year: ")
-        mileage = input("Enter car mileage: ")
+        make = sanitize_input(input("Enter car make: "))
+        model = sanitize_input(input("Enter car model: "))
+        year = sanitize_input(input("Enter car year: "))
+        mileage = sanitize_input(input("Enter car mileage: "))
         plate_number = sanitize_input(input("Enter car plate number: "))
-        available_now = input("Is the car available now? (yes/no): ")
+        available_now = sanitize_input(input("Is the car available now? (yes/no): "))
         print("\nChoose a Car Type")
         print("1. Luxury")
         print("2. Economy")

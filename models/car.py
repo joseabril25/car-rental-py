@@ -27,7 +27,7 @@ class Car(Base):
     model = Column(String)
     year = Column(Integer)
     mileage = Column(Integer)
-    plate_number = Column(String)
+    plate_number = Column(String, unique=True)
     available_now = Column(Boolean)  # Using Boolean type
     min_rent_period = Column(Integer)
     max_rent_period = Column(Integer)

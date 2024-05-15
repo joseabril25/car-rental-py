@@ -9,7 +9,6 @@ class Rental(Base):
     user_id = Column(Integer, ForeignKey('users.user_id'))
     start_date = Column(Date)
     end_date = Column(Date)
-    price = Column(Integer)
     status = Column(Integer)  # 0 ='pending', 1='approved', 2='rejected'
     cost = Column(Integer)
 

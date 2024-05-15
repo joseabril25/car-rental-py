@@ -16,7 +16,7 @@ class CustomerCLI():
 
     def customer_dashboard(self):
         while True:
-            print("\nCustomer Dashboard")
+            print("\nCustomer Dashboard\n")
             print("1. View Cars")
             print("2. Rentals Menu")
             print("3. Account")
@@ -40,10 +40,10 @@ class CustomerCLI():
 
     def rentals_menu(self):
         while True:
-            print("\nCustomer Dashboard")
+            print("\nRentals Menu\n")
             print("1. View Rentals")
             print("2. View Rental Status")
-            print("3. Rent a Car")
+            print("3. Book a Rental")
             print("4. Update Rental Status")
             print("5. Exit")
             choice = input("Choose an option: ")
