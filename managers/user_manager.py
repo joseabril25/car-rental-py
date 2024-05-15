@@ -11,7 +11,7 @@ class UserManager:
         self.session = DatabaseEngine.get_session()
         self.current_user = current_user
 
-    def register_user(self, username, password, role):
+    def register_user(self, username, password, role="customer"):
         try:
             # new_user = User(username=username, password=hash_password(password), role=role)
             new_user = UserFactory.create_user(role, username, hash_password(password))

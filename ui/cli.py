@@ -62,9 +62,8 @@ class CLI:
     def register(self):
         username = sanitize_input(input("Enter username: "))
         password = sanitize_input(input("Enter password: "))
-        role = input("Enter role (admin/customer): ")
         try:
-            self.user_manager.register_user(username, password, role)
+            self.user_manager.register_user(username, password)
             print("Registration successful. Please log in.")
         except Exception as e:
             print(f"An error occurred during registration: {e}")
