@@ -48,7 +48,7 @@ class RentalManager:
 
     def display_rentals(self, rentals):
         table = PrettyTable()
-        table.field_names = ["Rental ID", "Car", "User", "Start Date", "End Date", "Status"]
+        table.field_names = ["Rental ID", "Car", "User", "Start Date", "End Date", "Cost", "Status"]
 
         rental: Rental
         for rental in rentals:
@@ -61,7 +61,8 @@ class RentalManager:
                 username, 
                 rental.start_date.strftime('%b %d, %Y'), 
                 rental.end_date.strftime('%b %d, %Y'), 
-                status_description
+                rental.cost,
+                f"${status_description}"
                 ])
 
         print(table)

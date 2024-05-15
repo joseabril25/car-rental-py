@@ -60,8 +60,7 @@ class CustomerCLI():
                 print('show account')
                 # self.view_all_rentals()
             elif choice == '5':
-                print(f'Logout successful. Goodbye, {self.current_user.username}!')
-                self.logout_callback()
+                self.customer_dashboard()
                 continue
             else:
                 print("Invalid option. Please try again.")
