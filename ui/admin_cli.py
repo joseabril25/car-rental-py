@@ -180,6 +180,7 @@ class AdminCLI():
         model = input("Enter car model: ")
         year = input("Enter car year: ")
         mileage = input("Enter car mileage: ")
+        plate_number = sanitize_input(input("Enter car plate number: "))
         available_now = input("Is the car available now? (yes/no): ")
         print("\nChoose a Car Type")
         print("1. Luxury")
@@ -196,7 +197,7 @@ class AdminCLI():
 
         try:
             if car_type:
-                self.car_manager.add_car(make, model, int(year), int(mileage), int(availability), car_type)
+                self.car_manager.add_car(make, model, int(year), int(mileage), plate_number, int(availability), car_type)
                 print("Car added successfully.")
         except Exception as e:
             print(f"Failed to add car: {e}")

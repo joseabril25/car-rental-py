@@ -10,7 +10,7 @@ class CarManager:
     def __init__(self):
         self.session = DatabaseEngine.get_session()
 
-    def add_car(self, make, model, year, mileage, available_now, car_type):
+    def add_car(self, make, model, year, mileage, plate_number, available_now, car_type):
         try:
             new_car = CarFactory.create_or_update_car(
                 car_type=car_type, 
@@ -18,6 +18,7 @@ class CarManager:
                 model=model, 
                 year=year, 
                 mileage=mileage, 
+                plate_number=plate_number,
                 available_now=available_now)
             
             print('new_car: ', new_car)
