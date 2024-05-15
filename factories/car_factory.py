@@ -1,4 +1,5 @@
 from models.car import Car, CarType
+from services.pricing_service import PricingService
 
 class CarFactory:
     @staticmethod
@@ -28,6 +29,8 @@ class CarFactory:
         elif car_type == CarType.SUV:
             car.min_rent_period = 2
             car.max_rent_period = 45
+
+        car.price_per_day = PricingService.get_daily_rate(car_type)
 
         # Apply other attributes
         for key, value in kwargs.items():
