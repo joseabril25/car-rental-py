@@ -4,6 +4,7 @@ from managers.cars_manager import CarManager
 from managers.rental_manager import RentalManager
 from managers.user_manager import UserManager
 from models.car import CarType
+from models.rental import RentalStatus
 from states.global_state import GlobalState
 from utils.helpers import sanitize_input
 
@@ -87,12 +88,12 @@ class AdminCLI():
                 print("Invalid option. Please try again.")
 
     def admin_rental_menu(self):
-        while True:
+        is_rental_running = True
+        while is_rental_running:
             print("\nRentals Menu")
             print("1. View Rentals")
             print("2. Approve/Deny Rentals")
-            print("3. Update Cars")
-            print("4. Exit")
+            print("3. Exit")
             choice = input("Choose an option: ")
 
             if choice == '1':
@@ -100,12 +101,8 @@ class AdminCLI():
             elif choice == '2':
                 self.update_rental_status()
             elif choice == '3':
-                # self.update_user()
-                self.update_car()
-            elif choice == '4':
-                self.delete_car()
-            elif choice == '5':
-                self.admin_dashboard()
+                is_rental_running = False
+                continue
             else:
                 print("Invalid option. Please try again.")
 
@@ -227,6 +224,7 @@ class AdminCLI():
                 model = input(f"Enter new model or press enter to keep ({car.model}): ")
                 year = input(f"Enter new year or press enter to keep ({car.year}): ")
                 mileage = input(f"Enter new mileage or press enter to keep ({car.mileage}): ")
+                plate_number = input(f"Enter new mileage or press enter to keep ({car.plate_number}): ")
                 available_now = input(f"Is the car available now? (yes/no) or press enter to keep ({car.available_now}): ")
 
                 print("\nChoose a Car Type")
@@ -258,6 +256,8 @@ class AdminCLI():
                     car.available_now = availability
                 if car_type_choice:
                     car.car_type = car_type
+                if plate_number:
+                    car.plate_number = plate_number
             
                 self.car_manager.update_car(car_id, car)
                 print("Car updated successfully.")
@@ -310,8 +310,10 @@ class AdminCLI():
             print('Choose status:')
             print('1. Approve')
             print('2. Reject')
-            status = input("Enter status (approved/rejected): ")
+            status_choice = input("Enter status (approved/rejected): ")
+            status = RentalStatus.get_rental_type_by_number(int(status_choice))
 
             self.rental_manager.update_rental_status(rental_id, status)
+            print("Rental status updated successfully.")
         except Exception as e:
             print(f"Failed to retrieve rentals: {e}")

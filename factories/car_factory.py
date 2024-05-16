@@ -4,8 +4,6 @@ from services.pricing_service import PricingService
 class CarFactory:
     @staticmethod
     def create_or_update_car(car=None, car_type: str = None, **kwargs):
-        print('car: ', car)
-        print('car_type: ', car_type)
         # Determine if creating or updating
         if car is None and car_type is not None:
             # Creating a new car

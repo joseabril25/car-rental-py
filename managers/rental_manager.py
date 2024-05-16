@@ -48,21 +48,25 @@ class RentalManager:
 
     def display_rentals(self, rentals):
         table = PrettyTable()
-        table.field_names = ["Rental ID", "Car", "User", "Start Date", "End Date", "Cost", "Status"]
+        table.field_names = ["Rental ID",  "Car", "Car's Plate Number", "User", "Start Date", "End Date", "Cost", "Status"]
 
         rental: Rental
         for rental in rentals:
             car_plate = rental.car.plate_number if rental.car else "No Car"
+            car_make = rental.car.make if rental.car else "No Car"
+            car_model = rental.car.model if rental.car else "No Car"
+            car_year = rental.car.year if rental.car else "No Car"
             username = rental.user.username if rental.user else "No User"
             status_description = rental.get_status_description()
             table.add_row([
                 rental.rental_id, 
+                f"{car_make} {car_model} {car_year}",
                 car_plate, 
                 username, 
                 rental.start_date.strftime('%b %d, %Y'), 
                 rental.end_date.strftime('%b %d, %Y'), 
-                rental.cost,
-                f"${status_description}"
+                f"${rental.cost}",
+                status_description
                 ])
 
         print(table)

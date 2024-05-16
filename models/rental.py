@@ -17,6 +17,18 @@ class RentalStatus(enum.Enum):
             if status.value == value:
                 return status.name
         return None  # Optional: raise an exception or handle undefined cases
+    
+    @classmethod
+    def get_rental_type_by_number(cls, number):
+        mapping = {
+            0: RentalStatus.Pending,
+            1: RentalStatus.Approved,
+            2: RentalStatus.Rejected,
+            3: RentalStatus.Done
+        }
+
+        return mapping.get(number, None)
+    
 class Rental(Base):
     __tablename__ = 'rentals'
 

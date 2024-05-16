@@ -21,7 +21,6 @@ class CarManager:
                 plate_number=plate_number,
                 available_now=available_now)
             
-            print('new_car: ', new_car)
             self.session.add(new_car)
             self.session.commit()
         except Exception as e:
