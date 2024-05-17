@@ -2,7 +2,7 @@ from managers.cars_manager import CarManager
 from managers.rental_manager import RentalManager
 from managers.user_manager import UserManager
 from models.rental import Rental, RentalStatus
-from utils.helpers import convert_string_to_date, sanitize_input
+from utils.helpers import convert_string_to_date, sanitize_input, validate_date
 
 
 class CustomerCLI():
@@ -28,8 +28,7 @@ class CustomerCLI():
                 print('show rentals menu')
                 self.rentals_menu()
             elif choice == '3':
-                print('show account')
-                # self.view_all_rentals()
+                self.view_account()
             elif choice == '4':
                 print(f'Logout successful. Goodbye, {self.current_user.username}!')
                 self.logout_callback()
@@ -58,6 +57,12 @@ class CustomerCLI():
             else:
                 print("Invalid option. Please try again.")
 
+    # user methods
+    def view_account(self):
+        print(f"Username: {self.current_user.username}")
+        print(f"Role: {self.current_user.role}")
+
+    # car methods
     def view_available_cars(self):
         try:
             cars = self.car_manager.get_available_cars(self.current_user.is_admin())
@@ -96,6 +101,10 @@ class CustomerCLI():
                 if not car:
                     print("Car not found.")
                     return
+                
+                if not validate_date(start_date) or not validate_date(end_date):
+                    print("Invalid date format.")
+                    return
                 self.rental_manager.create_rental(car, car_id, self.current_user.user_id, start_date, end_date)
                 print("Rental created successfully.")
             except Exception as e:
@@ -123,6 +132,10 @@ class CustomerCLI():
                 start_date = input(f"Enter new start date (YYYY-MM-DD) or press enter to keep ({rental.start_date}): ")
                 end_date = input(f"Enter new end date (YYYY-MM-DD) or press enter to keep ({rental.end_date}): ")
 
+                if not validate_date(start_date) or not validate_date(end_date):
+                    print("Invalid date format.")
+                    return
+                
                 if start_date:
                     rental.start_date = convert_string_to_date(start_date)
                 if end_date:
