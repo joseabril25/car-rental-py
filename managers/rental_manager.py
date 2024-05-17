@@ -30,6 +30,17 @@ class RentalManager:
             self.session.rollback()
             raise
 
+    def update_rental(self, rental_id, updated_rental: Rental):
+        try:
+            print('update rental at rental_manager')
+            rental = self.session.query(Rental).filter(Rental.rental_id == rental_id).one()
+            RentalFactory.update_rental(rental, start_date=updated_rental.start_date, end_date=updated_rental.end_date)
+            self.session.commit()
+        except Exception as e:
+            print(f"Error updating rental: {e}")
+            self.session.rollback()
+            raise
+
     def get_all_rentals(self):
         try:
             return self.session.query(Rental).all()
@@ -38,7 +49,15 @@ class RentalManager:
             self.session.rollback()
             raise
 
-    def get_all_rentals_by_id(self, user_id):
+    def get_rental_by_id(self, rental_id):
+        try:
+            return self.session.query(Rental).filter(Rental.rental_id == rental_id).one()
+        except Exception as e:
+            print(f'Error fetching rental: {e}')
+            self.session.rollback()
+            raise
+
+    def get_all_rentals_by_user_id(self, user_id):
         try:
             return self.session.query(Rental).filter(Rental.user_id == user_id).all()
         except Exception as e:
@@ -48,7 +67,7 @@ class RentalManager:
 
     def display_rentals(self, rentals):
         table = PrettyTable()
-        table.field_names = ["Rental ID",  "Car", "Car's Plate Number", "User", "Start Date", "End Date", "Cost", "Status"]
+        table.field_names = ["Rental ID",  "Car", "Car's Plate Number", "User", "Start Date", "End Date", "Cost", "Daily Rate", "Status"]
 
         rental: Rental
         for rental in rentals:
@@ -56,6 +75,7 @@ class RentalManager:
             car_make = rental.car.make if rental.car else "No Car"
             car_model = rental.car.model if rental.car else "No Car"
             car_year = rental.car.year if rental.car else "No Car"
+            car_rate = rental.car.price_per_day if rental.car else "No Car"
             username = rental.user.username if rental.user else "No User"
             status_description = rental.get_status_description()
             table.add_row([
@@ -66,6 +86,7 @@ class RentalManager:
                 rental.start_date.strftime('%b %d, %Y'), 
                 rental.end_date.strftime('%b %d, %Y'), 
                 f"${rental.cost}",
+                f"${car_rate}",
                 status_description
                 ])
 

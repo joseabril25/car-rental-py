@@ -20,19 +20,15 @@ cd car_rental_system
 ```bash
 pip install -r requirements.txt
 ```
-3. Initialize the Database
-```bash
-python -m database.engine
-```
 
-4. Run the Application
+3. Run the Application
 ```bash
 python main.py
 ```
 
 ### Configuration
-* Database Configuration: Configure the database by editing the DATABASE_URL in database/engine.py to point to your preferred database.
-* Environment Variables: Set up necessary environment variables for a production environment, such as FLASK_ENV for Flask applications.
+* Database will be created automatically if car_rental_system.db does not exist.
+* No additional configuration is required to run the application.
 
 ## File Structure
 
@@ -48,7 +44,53 @@ python main.py
   * car_manager.py - Manages car-related operations.
   * user_manager.py - Manages user operations.
   * rental_manager.py - Manages rental operations.
+* /factories
+  * car_factory.py - Generates Car objects.
+  * user_factory.py - Generates User objects.
+  * rental_factory.py - Generates Rental objects.
 * requirements.txt - Lists all Python packages that need to be installed.
+  
+## Usage Guide
+
+### Welcome Screen
+
+Upon starting the application, you will be greeted with the welcome screen. From here, you can choose to log in or register as a new user.
+
+1. Login automatically detects if you are an administrator or a customer based on your role.
+2. Registration allows you to create a new user account but as a customer.
+
+### Admins
+
+Administrators have access to the following features:
+
+1. User Management:
+  * View all users
+  * Create users (customers and admins only)
+  * Update users (username, password and role)
+  * Delete users
+2. Car Management:
+  * View all cars
+  * Create cars
+  * Update cars (brand, model, year, and price, etc.)
+  * Delete cars
+3. Rental Management:
+  * View all rentals
+  * Approve or Deny rentals
+  * Update rentals
+  * Delete rentals
+  
+### Customers
+
+Customers have access to the following features:
+
+1. View available cars
+2. Rent cars
+  * View customer rentals
+  * Book a rental
+  * Cancel/Update a rental
+3. View profile
+  * Update profile
+
 
 ## Licensing
 The Car Rental System is released under the MIT License. See the LICENSE file for full license text.

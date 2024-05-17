@@ -1,5 +1,5 @@
 import enum
-from sqlalchemy import Column, Enum, ForeignKey, Integer, Date
+from sqlalchemy import Column, Enum, Float, ForeignKey, Integer, Date
 from sqlalchemy.orm import relationship
 
 from .base import Base
@@ -37,7 +37,7 @@ class Rental(Base):
     user_id = Column(Integer, ForeignKey('users.user_id'))
     start_date = Column(Date)
     end_date = Column(Date)
-    cost = Column(Integer)
+    cost = Column(Float)
     status = Column(Enum(RentalStatus))  # 0 ='pending', 1='approved', 2='rejected', 3='done'
     car = relationship("Car", backref="rentals")
     user = relationship("User", backref="rentals")
@@ -56,6 +56,6 @@ class Rental(Base):
     def __str__(self):
         return (f"Rental ID: {self.rental_id}, Car ID: {self.car_id}, User ID: {self.user_id}, "
                 f"Start Date: {self.start_date}, End Date: {self.end_date}, "
-                f"Status: {RentalStatus.get_status_name(self.status)}")
+                f"Status: {self.status}")
     
 

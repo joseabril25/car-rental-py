@@ -1,10 +1,9 @@
-from factories.user_factory import UserFactory
 from managers.cars_manager import CarManager
 from managers.rental_manager import RentalManager
 from managers.user_manager import UserManager
-from models.car import CarType
-from states.global_state import GlobalState
-from utils.helpers import sanitize_input
+from models.rental import Rental, RentalStatus
+from utils.helpers import convert_string_to_date, sanitize_input
+
 
 class CustomerCLI():
     def __init__(self, logout_callback, current_user=None):
@@ -42,24 +41,18 @@ class CustomerCLI():
         while True:
             print("\nRentals Menu\n")
             print("1. View Rentals")
-            print("2. View Rental Status")
-            print("3. Book a Rental")
-            print("4. Update Rental Status")
-            print("5. Exit")
+            print("2. Book a Rental")
+            print("3. Update Rental")
+            print("4. Exit")
             choice = input("Choose an option: ")
 
             if choice == '1':
                 self.view_all_rentals()
-            if choice == '2':
-                print('show rentals menu')
-                # self.admin_cars_menu()
-            elif choice == '3':
-                print('rent a car')
+            elif choice == '2':
                 self.book_rental()
+            elif choice == '3':
+                self.update_rental()
             elif choice == '4':
-                print('show account')
-                # self.view_all_rentals()
-            elif choice == '5':
                 self.customer_dashboard()
                 continue
             else:
@@ -78,7 +71,7 @@ class CustomerCLI():
     # rental methods
     def view_all_rentals(self):
         try:
-            rentals = self.rental_manager.get_all_rentals_by_id(self.current_user.user_id)
+            rentals = self.rental_manager.get_all_rentals_by_user_id(self.current_user.user_id)
 
             if len(rentals) < 1:
                 print("No rentals available.")
@@ -107,3 +100,35 @@ class CustomerCLI():
                 print("Rental created successfully.")
             except Exception as e:
                 print(f"Failed to create rental: {e}")
+
+    def update_rental(self):
+        try:
+            rentals = self.rental_manager.get_all_rentals_by_user_id(self.current_user.user_id)
+            if len(rentals) < 1:
+                print("No cars available.")
+            else:
+                self.rental_manager.display_rentals(rentals)
+
+                rental_id = sanitize_input(input("Enter Rental ID: "))
+
+                rental = self.rental_manager.get_rental_by_id(rental_id)
+                if not rental:
+                    print("Rental not found.")
+                    return
+                
+                if rental.status == RentalStatus.Approved or rental.status == RentalStatus.Rejected or rental.status == RentalStatus.Done:
+                    print(f"Cannot update rental with status {RentalStatus.get_status_name(rental.status)}.")
+                    return
+                
+                start_date = input(f"Enter new start date (YYYY-MM-DD) or press enter to keep ({rental.start_date}): ")
+                end_date = input(f"Enter new end date (YYYY-MM-DD) or press enter to keep ({rental.end_date}): ")
+
+                if start_date:
+                    rental.start_date = convert_string_to_date(start_date)
+                if end_date:
+                    rental.end_date = convert_string_to_date(end_date)
+                
+                self.rental_manager.update_rental(rental_id, rental)
+                print("Rental created successfully.")
+        except Exception as e:
+            print(f"Failed to create rental: {e}")

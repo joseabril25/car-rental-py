@@ -45,6 +45,7 @@ class RentalFactory:
 
     @staticmethod
     def update_rental(rental, **kwargs):
+        print('update rental at rental_factory')
         """
         Updates an existing Rental instance with given keyword arguments.
 
