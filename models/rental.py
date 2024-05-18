@@ -17,16 +17,16 @@ class RentalStatus(enum.Enum):
             if status.value == value:
                 return status.name
         return None  # Optional: raise an exception or handle undefined cases
-    
+
     @classmethod
     def get_rental_type_by_number(cls, number):
+        """Retrieve a rental status type based on its integer representation."""
         mapping = {
             0: RentalStatus.Pending,
             1: RentalStatus.Approved,
             2: RentalStatus.Rejected,
             3: RentalStatus.Done
         }
-
         return mapping.get(number, None)
     
 class Rental(Base):
@@ -41,13 +41,6 @@ class Rental(Base):
     status = Column(Enum(RentalStatus))  # 0 ='pending', 1='approved', 2='rejected', 3='done'
     car = relationship("Car", backref="rentals")
     user = relationship("User", backref="rentals")
-
-    def extend_rental(self, new_end_date):
-        self.end_date = new_end_date
-
-    def calculate_cost(self):
-        days = (self.end_date - self.start_date).days
-        return self.car.calculate_rental_cost(days)
     
     def get_status_description(self):
         """Return the string description of the current status."""

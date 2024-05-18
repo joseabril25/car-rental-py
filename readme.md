@@ -48,6 +48,16 @@ python main.py
   * car_factory.py - Generates Car objects.
   * user_factory.py - Generates User objects.
   * rental_factory.py - Generates Rental objects.
+* /utils
+  * helpers.py - Contains helper functions for date validation and formatting.
+* ui
+  * cli.py - Contains the command-line interface for the application.
+  * admin_cli.py - Contains the command-line interface for administrators.
+  * customer_cli.py - Contains the command-line interface for customers.
+* /states
+  * global_state.py - Contains the global state of the application.
+* /services
+  * pricing_service.py - Contains the pricing service for calculating rental prices.
 * requirements.txt - Lists all Python packages that need to be installed.
   
 ## Usage Guide
