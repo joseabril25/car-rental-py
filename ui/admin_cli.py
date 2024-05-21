@@ -353,9 +353,21 @@ class AdminCLI():
             print('1. Approve')
             print('2. Reject')
             status_choice = input("Enter status (approved/rejected): ")
+            if status_choice not in ['1', '2']:
+                print("Invalid choice. Please try again.")
+                return
+            
             status = RentalStatus.get_rental_type_by_number(int(status_choice))
 
+            if status == RentalStatus.Approved:
+                car = self.car_manager.get_car(rental.car_id)
+                car.available_now = False
+            elif status == RentalStatus.Rejected:
+                car = self.car_manager.get_car(rental.car_id)
+                car.available_now = True
+
             self.rental_manager.update_rental_status(rental_id, status)
+            self.car_manager.update_car(rental.car_id, car)
             print("Rental status updated successfully.")
         except Exception as e:
             print(f"Failed to retrieve rentals: {e}")
