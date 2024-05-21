@@ -16,15 +16,34 @@ git clone https://github.com/joseabril25/car-rental-py.git
 cd car_rental_system
 ```
 
-2. Install Required Packages
+2. Create a Virtual Environment
+```bash
+python -m venv .venv
+```
+
+3. Activate the Virtual Environment
+```bash
+# Windows
+.venv\Scripts\activate
+
+# Linux/Mac
+source .venv/bin/activate
+```
+
+4. Install Required Packages
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Run the Application
+5. Run the Application
 ```bash
 python main.py
 ```
+
+6. Follow the on-screen instructions to navigate the application.
+7. Superadmin credentials:
+  * Username: superadmin
+  * Password: superadmin
 
 ### Configuration
 * Database will be created automatically if car_rental_system.db does not exist.
