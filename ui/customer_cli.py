@@ -64,6 +64,8 @@ class CustomerCLI():
     # user methods
     def view_account(self):
         os.system('clear')
+        print(f"Full Name: {self.current_user.fullname}")
+        print(f"Passport ID Number: {self.current_user.passport}")
         print(f"Username: {self.current_user.username}")
         print(f"Role: {self.current_user.role}")
 
