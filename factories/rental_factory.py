@@ -76,7 +76,7 @@ class RentalFactory:
         return car.min_rent_period <= rental_duration <= car.max_rent_period
     
     @staticmethod
-    def calculate_cost(start_date, end_date, rate: int):
+    def calculate_cost(start_date, end_date, rate: float):
         verified_start_date = validate_date(start_date)
         verified_end_date = validate_date(end_date)
         """Calculate the total cost of the rental."""

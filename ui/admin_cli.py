@@ -6,7 +6,8 @@ from managers.user_manager import UserManager
 from models.car import CarType
 from models.rental import RentalStatus
 from states.global_state import GlobalState
-from utils.helpers import sanitize_input
+from utils.helpers import hash_password, sanitize_input
+import os
 
 class AdminCLI():
     def __init__(self, logout_callback, current_user=None):
@@ -17,6 +18,7 @@ class AdminCLI():
         self.logout_callback = logout_callback
 
     def admin_dashboard(self):
+        os.system('clear')
         while True:
             user = GlobalState.get_current_user()
 
@@ -41,6 +43,7 @@ class AdminCLI():
                 print("Invalid option. Please try again.")
 
     def admin_user_menu(self):
+        os.system('clear')
         while True:
             print("\nUsers Menu")
             print("1. Add User")
@@ -64,6 +67,7 @@ class AdminCLI():
                 print("Invalid option. Please try again.")
 
     def admin_cars_menu(self):
+        os.system('clear')
         while True:
             print("\nCars Menu")
             print("1. Add Cars")
@@ -88,6 +92,7 @@ class AdminCLI():
                 print("Invalid option. Please try again.")
 
     def admin_rental_menu(self):
+        os.system('clear')
         is_rental_running = True
         while is_rental_running:
             print("\nRentals Menu")
@@ -109,21 +114,30 @@ class AdminCLI():
     
     # USERS METHODS
     def add_user(self):
+        os.system('clear')
+        fullname = sanitize_input(input("Enter Your Full Name: "))
+        passport = sanitize_input(input("Enter Your Passport ID Number: "))
         username = sanitize_input(input("Enter username: "))
         password = sanitize_input(input("Enter password: "))
-        role = input("Enter role (admin/customer): ")
+        role = sanitize_input(input("Enter role (admin/customer): "))
+
+        if role not in ['admin', 'customer']:
+            print("Invalid role. Please try again.")
+            return
+        
         try:
-            self.user_manager.register_user(username, password, role)
+            self.user_manager.register_user(fullname, passport, username, password, role)
             print("User added successfully.")
         except Exception as e:
             print(f"An error occurred during registration: {e}")
     def view_all_users(self):
+        os.system('clear')
         try:
             if not self.current_user.is_admin():
                 print("You do not have permission to view all users.")
                 return
-            user_table = self.user_manager.get_all_users()
-            print(user_table)
+            self.user_manager.get_all_users()
+            # print(user_table)
         except Exception as e:
             print(f"An error occurred: {e}")
 
@@ -136,15 +150,10 @@ class AdminCLI():
             print(f"Failed to delete user: {e}")
 
     def update_user(self):
+        os.system('clear')
         try:
-            # Check if user is admin
-            if not self.current_user.is_admin():
-                print("You do not have permission to view all users.")
-                return
-            # Get all users and show options
-            user_table = self.user_manager.get_all_users()
-            print(user_table)
-
+            self.view_all_users()
+            
             user_id = int(input("Enter user ID: "))
             #check if user exists
             user = self.user_manager.get_user_by_id(user_id)
@@ -153,14 +162,23 @@ class AdminCLI():
                 return
             
             # Get new user details
-            username = input("Enter new username or press enter to keep: ")
-            password = input("Enter new password or press enter to keep: ")
-            role = input("Enter new role or press enter to keep (admin/customer): ")
+            fullname = sanitize_input(input(f"Enter Your Full Name ({user.fullname}): "))
+            passport = sanitize_input(input(f"Enter Your Passport ID Number ({user.passport}): "))
+            username = input(f"Enter new username or press enter to keep ({user.username}): ")
+            password = input(f"Enter new password or press enter to keep: ")
+            role = input(f"Enter new role (admin/customer) or press enter to keep ({user.role}): ")
 
+            if role.strip() and role not in ['admin', 'customer']:
+                print("Invalid role. Please try again.")
+                return
+            if fullname:
+                user.fullname = fullname
+            if passport:
+                user.passport = passport
             if username:
                 user.username = username
             if password:
-                user.password = password
+                user.password = hash_password(password)
             if role:
                 user.role = role
 
@@ -173,6 +191,8 @@ class AdminCLI():
     # CARS METHODS
 
     def add_car(self):
+        os.system('clear')
+        print(f"*** Add New Car *** \n\n")
         make = sanitize_input(input("Enter car make: "))
         model = sanitize_input(input("Enter car model: "))
         year = sanitize_input(input("Enter car year: "))
@@ -200,6 +220,8 @@ class AdminCLI():
             print(f"Failed to add car: {e}")
 
     def update_car(self):
+        os.system('clear')
+        print(f"*** Update Car *** \n\n")
         self.view_available_cars()
 
         while True:
@@ -234,10 +256,10 @@ class AdminCLI():
 
                 car_type_choice = input(f"Enter car type or press enter to keep ({car.car_type.name}): ")
 
-                if car_type_choice.isdigit():
-                    car_type = CarType.get_car_type_by_number(car_type_choice)
-                else:
-                    car_type = car.car_type
+                print('CarType.get_car_type_by_number(car_type_choice): ', CarType.get_car_type_by_number(int(car_type_choice)))
+                if car_type_choice.strip() and CarType.get_car_type_by_number(int(car_type_choice)) is None:
+                    print('Invalid car type. Please try again.')
+                    return
 
                 if available_now.lower() == 'yes':
                     availability = True
@@ -255,7 +277,7 @@ class AdminCLI():
                 if available_now:
                     car.available_now = availability
                 if car_type_choice:
-                    car.car_type = car_type
+                    car.car_type = CarType.get_car_type_by_number(int(car_type_choice))
                 if plate_number:
                     car.plate_number = plate_number
             
@@ -267,6 +289,8 @@ class AdminCLI():
                 break
 
     def view_available_cars(self):
+        os.system('clear')
+        print(f"*** View Cars *** \n\n")
         try:
             cars = self.car_manager.get_available_cars(self.current_user.is_admin())
             if len(cars) < 1:
@@ -277,7 +301,10 @@ class AdminCLI():
             print(f"Failed to retrieve available cars: {e}")
 
     def delete_car(self):
+        os.system('clear')
+        print(f"*** Delete Car *** \n\n")
         try:
+            self.view_available_cars()
             car_id = input("Enter car ID: ")
             self.car_manager.delete_car(car_id)
             print("Car deleted successfully.")
@@ -287,6 +314,8 @@ class AdminCLI():
 
     # RENTAL METHODS
     def view_all_rentals(self):
+        print(f"*** View Rentals *** \n\n")
+        os.system('clear')
         try:
             rentals = self.rental_manager.get_all_rentals()
 
@@ -300,13 +329,26 @@ class AdminCLI():
             print(f"Failed to retrieve rentals: {e}")
 
     def update_rental_status(self):
+        os.system('clear')
+        print(f"*** Update Rental Status *** \n\n")
         try:
             is_rental_empty = self.view_all_rentals()
 
             if not is_rental_empty:
                 return
 
-            rental_id = input("Enter rental ID: ")
+            rental_id = sanitize_input(input("Enter rental ID: "))
+
+            rental = self.rental_manager.get_rental_by_id(rental_id)
+
+            if not rental:
+                print("Rental not found.")
+                return
+            
+            if rental.status == RentalStatus.Done or rental.status == RentalStatus.Cancelled:
+                    print(f"Cannot update rental with status {RentalStatus.get_status_name(rental.status)}.")
+                    return
+
             print('Choose status:')
             print('1. Approve')
             print('2. Reject')

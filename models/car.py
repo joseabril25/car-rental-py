@@ -11,7 +11,7 @@ class CarType(enum.Enum):
     SUV = 'SUV'
 
     @classmethod
-    def get_car_type_by_number(cls, number):
+    def get_car_type_by_number(cls, number: int):
         mapping = {
             1: CarType.Luxury,
             2: CarType.Economy,

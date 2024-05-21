@@ -7,6 +7,8 @@ class User(Base):
 
     user_id = Column(Integer, primary_key=True)
     username = Column(String, unique=True)
+    fullname = Column(String)
+    passport = Column(String)
     password = Column(String)
     role = Column(String)  # 'customer' or 'admin'
 

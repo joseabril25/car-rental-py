@@ -9,6 +9,7 @@ class RentalStatus(enum.Enum):
     Approved = 1
     Rejected = 2
     Done = 3
+    Cancelled = 4
 
     @classmethod
     def get_status_name(cls, value):

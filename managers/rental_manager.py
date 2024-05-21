@@ -32,7 +32,6 @@ class RentalManager:
 
     def update_rental(self, rental_id, updated_rental: Rental):
         try:
-            print('update rental at rental_manager')
             rental = self.session.query(Rental).filter(Rental.rental_id == rental_id).one()
             RentalFactory.update_rental(rental, start_date=updated_rental.start_date, end_date=updated_rental.end_date)
             self.session.commit()
@@ -67,7 +66,7 @@ class RentalManager:
 
     def display_rentals(self, rentals):
         table = PrettyTable()
-        table.field_names = ["Rental ID",  "Car", "Car's Plate Number", "User", "Start Date", "End Date", "Cost", "Daily Rate", "Status"]
+        table.field_names = ["Rental ID",  "Car", "Car's Plate Number", "User", "Start Date", "End Date", "Total Cost", "Daily Rate", "Status"]
 
         rental: Rental
         for rental in rentals:

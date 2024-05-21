@@ -18,7 +18,6 @@ class CarFactory:
 
         # Apply type-specific attributes
         if car_type == CarType.Luxury:
-            print('does it select the corret car type?')
             car.min_rent_period = 3
             car.max_rent_period = 30
         elif car_type == CarType.Economy:

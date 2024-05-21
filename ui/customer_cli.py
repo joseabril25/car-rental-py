@@ -1,8 +1,10 @@
+from factories.rental_factory import RentalFactory
 from managers.cars_manager import CarManager
 from managers.rental_manager import RentalManager
 from managers.user_manager import UserManager
 from models.rental import Rental, RentalStatus
-from utils.helpers import convert_string_to_date, sanitize_input, validate_date
+from utils.helpers import check_start_date, convert_string_to_date, sanitize_input, validate_date
+import os
 
 
 class CustomerCLI():
@@ -14,6 +16,7 @@ class CustomerCLI():
         self.logout_callback = logout_callback
 
     def customer_dashboard(self):
+        os.system('clear')
         while True:
             print("\nCustomer Dashboard\n")
             print("1. View Cars")
@@ -37,6 +40,7 @@ class CustomerCLI():
                 print("Invalid option. Please try again.")
 
     def rentals_menu(self):
+        os.system('clear')
         while True:
             print("\nRentals Menu\n")
             print("1. View Rentals")
@@ -59,11 +63,13 @@ class CustomerCLI():
 
     # user methods
     def view_account(self):
+        os.system('clear')
         print(f"Username: {self.current_user.username}")
         print(f"Role: {self.current_user.role}")
 
     # car methods
     def view_available_cars(self):
+        os.system('clear')
         try:
             cars = self.car_manager.get_available_cars(self.current_user.is_admin())
             if len(cars) < 1:
@@ -75,6 +81,7 @@ class CustomerCLI():
 
     # rental methods
     def view_all_rentals(self):
+        os.system('clear')
         try:
             rentals = self.rental_manager.get_all_rentals_by_user_id(self.current_user.user_id)
 
@@ -86,6 +93,7 @@ class CustomerCLI():
             print(f"Failed to retrieve rentals: {e}")
 
     def book_rental(self):
+        os.system('clear')
         cars = self.car_manager.get_available_cars(self.current_user.is_admin())
         if len(cars) < 1:
             print("No cars available.")
@@ -105,12 +113,27 @@ class CustomerCLI():
                 if not validate_date(start_date) or not validate_date(end_date):
                     print("Invalid date format.")
                     return
+                
+                # check if start_date is later than date today
+                if not check_start_date(start_date):
+                    print("Start date must be later than today.")
+                    return
+                
+                calculate_price = RentalFactory.calculate_cost(start_date, end_date, car.price_per_day)
+                print(f"Cost: ${calculate_price}")
+                confirm = input("Confirm booking? (yes/no): ")
+                if confirm.lower() != 'yes':
+                    os.system('clear')
+                    print("Booking canceled.")
+                    return
+                
                 self.rental_manager.create_rental(car, car_id, self.current_user.user_id, start_date, end_date)
                 print("Rental created successfully.")
             except Exception as e:
                 print(f"Failed to create rental: {e}")
 
     def update_rental(self):
+        os.system('clear')
         try:
             rentals = self.rental_manager.get_all_rentals_by_user_id(self.current_user.user_id)
             if len(rentals) < 1:
@@ -125,15 +148,26 @@ class CustomerCLI():
                     print("Rental not found.")
                     return
                 
-                if rental.status == RentalStatus.Approved or rental.status == RentalStatus.Rejected or rental.status == RentalStatus.Done:
+                if rental.status == RentalStatus.Approved or rental.status == RentalStatus.Rejected or rental.status == RentalStatus.Done or rental.status == RentalStatus.Cancelled:
                     print(f"Cannot update rental with status {RentalStatus.get_status_name(rental.status)}.")
                     return
                 
+                cancel = input(f"Cancel rental? (yes/no): ")
+
+                if (cancel.lower() == 'yes'):
+                    self.rental_manager.update_rental_status(rental_id, RentalStatus.Cancelled)
+                    print("Rental canceled successfully.")
+                    return
+
                 start_date = input(f"Enter new start date (YYYY-MM-DD) or press enter to keep ({rental.start_date}): ")
                 end_date = input(f"Enter new end date (YYYY-MM-DD) or press enter to keep ({rental.end_date}): ")
+                
 
-                if not validate_date(start_date) or not validate_date(end_date):
-                    print("Invalid date format.")
+                if start_date and not validate_date(start_date):
+                    print("Invalid start date format.")
+                    return
+                if end_date and not validate_date(end_date):
+                    print("Invalid end date format.")
                     return
                 
                 if start_date:
@@ -142,6 +176,6 @@ class CustomerCLI():
                     rental.end_date = convert_string_to_date(end_date)
                 
                 self.rental_manager.update_rental(rental_id, rental)
-                print("Rental created successfully.")
+                print("Rental updated successfully.")
         except Exception as e:
             print(f"Failed to create rental: {e}")

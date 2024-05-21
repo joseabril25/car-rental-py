@@ -37,3 +37,15 @@ def convert_string_to_date(date_string):
         return datetime.strptime(date_string, '%Y-%m-%d').date()
     except ValueError:
         raise ValueError("Invalid date format. Please use 'YYYY-MM-DD'.")
+    
+def check_start_date(date_string):
+    """
+    Check if the start date is later than today.
+
+    Args:
+        start_date (datetime_string): The start date of the rental.
+
+    Returns:
+        bool: True if the start date is later than today, False otherwise.
+    """
+    return datetime.strptime(date_string, '%Y-%m-%d').date() >= datetime.now().date()
