@@ -1,1 +1,1 @@
-from constants.constants import INITIAL_DATA
+from .constants import INITIAL_DATA

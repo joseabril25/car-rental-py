@@ -7,7 +7,7 @@ Welcome to the Car Rental System, an easy-to-use platform designed to manage car
 Before you install and run the Car Rental System, make sure you have the following software installed:
 
 * Python 3.9 or later
-* pip (Python package installer)
+* pip 24 or later (Python package installer)
  
 ### Installation
 1. Clone the Repository

@@ -1,3 +1,3 @@
 # __init__.py
 
-from database.engine import DatabaseEngine
+from .engine import DatabaseEngine
