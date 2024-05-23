@@ -2,6 +2,22 @@
 
 Welcome to the Car Rental System, an easy-to-use platform designed to manage car rentals for both customers and administrators. This system allows for user registration, car management, rental booking, and rental management.
 
+## Features
+
+* Customer and Administrator roles
+* User registration and login
+* Car management (CRUD operations)
+* Rental booking and management
+* Pricing service for calculating rental prices
+* Command-line interface for easy navigation
+* User-friendly interface with clear instructions
+* Superadmin account for initial setup
+* Data persistence using SQLite database
+* Data validation and error handling
+* User-friendly error messages
+* Detailed documentation and usage guide
+* Loyalty program for customers
+
 ## Getting Started
 ### Prerequisites
 Before you install and run the Car Rental System, make sure you have the following software installed:
@@ -128,6 +144,11 @@ The Car Rental System is released under the MIT License. See the LICENSE file fo
 
 * Date handling issues when incorrect formats are entered. Ensure dates are always in YYYY-MM-DD format.
 * Performance issues with large datasets due to non-optimized queries.
+* User Authentication - No account lockout mechanism for multiple failed login attempts. Implement a rate-limiting or lockout mechanism after a certain number of failed attempts.
+* Concurrency Issues: Potential race conditions when multiple users try to book the same car simultaneously. Implement transaction management and locks to handle concurrency.
+* Data Validation: Lack of comprehensive data validation might lead to inconsistent data entries. Implement thorough validation for all user inputs and database entries.
+* Security: Potential security vulnerabilities, such as SQL injection, if user inputs are not sanitized. Ensure proper sanitization of all user inputs and use parameterized queries.
+* User Interface: The command-line interface might be less intuitive for some users. Consider adding more user-friendly prompts and help messages.
 
 ## Credits
 Developed by:
