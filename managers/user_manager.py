@@ -12,6 +12,8 @@ class UserManager:
         self.current_user = current_user
 
     def register_user(self, fullname, passport, username, password, role="customer"):
+        """Registers a new user in the system."""
+        
         try:
             # new_user = User(username=username, password=hash_password(password), role=role)
             new_user = UserFactory.create_user(role, username, hash_password(password), fullname, passport)
@@ -62,7 +64,6 @@ class UserManager:
             raise
 
     def update_user(self, user_id: int, updated_user: User):
-        # Fetch the user from the database
         try:
             user = self.session.query(User).filter(User.user_id == user_id).one()
             if not user:
@@ -75,7 +76,8 @@ class UserManager:
                 passport=updated_user.passport,
                 username=updated_user.username,
                 password=updated_user.password,
-                role=updated_user.role
+                role=updated_user.role,
+                loyalty_points=updated_user.loyalty_points
                 )
 
             self.session.commit()
@@ -85,14 +87,25 @@ class UserManager:
             self.session.rollback()
             print(f"Failed to update user: {e}")
             return False
+        
+    def update_user_loyalty_points(self, user_id: int, points: int):
+        try:
+            user = self.session.query(User).filter(User.user_id == user_id).one()
+            user.loyalty_points += points
+            self.session.commit()
+            self.session.refresh(user)
+        except Exception as e:
+            print(f"Error updating user loyalty points: {e}")
+            self.session.rollback()
+            raise
 
 
     def display_users(self, users):
         table = PrettyTable()
-        table.field_names = ["User ID", "Full Name","Passport","Username", "User Role"]
+        table.field_names = ["User ID", "Full Name","Passport","Username", "User Role", "Loyalty Points"]
 
         # user: User
         for user in users:
-            table.add_row([user.user_id, user.fullname, user.passport, user.username, user.role])
+            table.add_row([user.user_id, user.fullname, user.passport, user.username, user.role, user.loyalty_points])
 
         print(table)

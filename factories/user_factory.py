@@ -33,3 +33,9 @@ class UserFactory:
         # Additional validation or processing can be added here
         
         return user
+    
+    @staticmethod
+    def calculate_loyalty_points(cost):
+        """Calculate the loyalty points earned by a user for a given cost."""
+        points = cost // 10
+        return points

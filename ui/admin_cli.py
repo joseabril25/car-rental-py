@@ -19,7 +19,8 @@ class AdminCLI():
 
     def admin_dashboard(self):
         os.system('clear')
-        while True:
+        is_running = True
+        while is_running:
             user = GlobalState.get_current_user()
 
             print("\nAdmin Dashboard")
@@ -38,7 +39,7 @@ class AdminCLI():
             elif choice == '4':
                 print(f'Logout successful. Goodbye, {user.username}!')
                 self.logout_callback()
-                continue
+                is_running = False
             else:
                 print("Invalid option. Please try again.")
 
@@ -144,8 +145,12 @@ class AdminCLI():
     def delete_user(self):
         try:
             user_id = input("Enter user ID: ")
-            self.user_manager.delete_user(user_id)
-            print("User deleted successfully.")
+            confirm = sanitize_input(input("Are you sure you want to delete this user? (yes/no): "))
+
+            if confirm.lower() == 'yes':
+                print('Deleting user...')
+                self.user_manager.delete_user(user_id)
+                print("User deleted successfully.")
         except Exception as e:
             print(f"Failed to delete user: {e}")
 
@@ -256,7 +261,6 @@ class AdminCLI():
 
                 car_type_choice = input(f"Enter car type or press enter to keep ({car.car_type.name}): ")
 
-                print('CarType.get_car_type_by_number(car_type_choice): ', CarType.get_car_type_by_number(int(car_type_choice)))
                 if car_type_choice.strip() and CarType.get_car_type_by_number(int(car_type_choice)) is None:
                     print('Invalid car type. Please try again.')
                     return
@@ -306,8 +310,12 @@ class AdminCLI():
         try:
             self.view_available_cars()
             car_id = input("Enter car ID: ")
-            self.car_manager.delete_car(car_id)
-            print("Car deleted successfully.")
+            confirm = sanitize_input(input("Are you sure you want to delete this car? (yes/no): "))
+
+            if confirm.lower() == 'yes':
+                print('Deleting car...')
+                self.car_manager.delete_car(car_id)
+                print("Car deleted successfully.")
         except Exception as e:
             print(f"Failed to delete car: {e}")
 

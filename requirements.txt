@@ -1,5 +1,12 @@
+altgraph==0.17.4
 bcrypt==4.1.2
+importlib_metadata==7.1.0
+macholib==1.16.3
+packaging==24.0
 prettytable==3.10.0
+pyinstaller==6.7.0
+pyinstaller-hooks-contrib==2024.6
 SQLAlchemy==2.0.29
 typing_extensions==4.11.0
 wcwidth==0.2.13
+zipp==3.18.2

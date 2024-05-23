@@ -13,6 +13,7 @@ from ui.customer_cli import CustomerCLI
 from utils.helpers import sanitize_input
 from utils.helpers import validate_date
 import os
+import sys
 
 class CLI:
     def __init__(self):
@@ -41,7 +42,7 @@ class CLI:
             elif choice == '3':
                 print("Exiting system.")
                 is_running = False
-                continue
+                sys.exit()
             else:
                 print("Invalid option. Please try again.")
 

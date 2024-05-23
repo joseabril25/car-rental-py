@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Float, Integer, String
 from sqlalchemy.orm import relationship
 from .base import Base
 
@@ -11,6 +11,7 @@ class User(Base):
     passport = Column(String)
     password = Column(String)
     role = Column(String)  # 'customer' or 'admin'
+    loyalty_points = Column(Integer, default=0)
 
     def is_admin(self):
         return self.role == 'admin'

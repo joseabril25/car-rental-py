@@ -48,6 +48,16 @@ class CarManager:
             self.session.rollback()
             raise
 
+    def update_car_status(self, car_id, status):
+        try:
+            car = self.session.query(Car).filter(Car.car_id == car_id).one()
+            setattr(car, 'available_now', status)
+            self.session.commit()
+        except Exception as e:
+            print(f"Error updating car status: {e}")
+            self.session.rollback()
+            raise
+
     def delete_car(self, car_id):
         try:
             car = self.session.query(Car).filter(Car.car_id == car_id).one()

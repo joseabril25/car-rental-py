@@ -1,4 +1,5 @@
 from factories.rental_factory import RentalFactory
+from factories.user_factory import UserFactory
 from managers.cars_manager import CarManager
 from managers.rental_manager import RentalManager
 from managers.user_manager import UserManager
@@ -17,7 +18,8 @@ class CustomerCLI():
 
     def customer_dashboard(self):
         os.system('clear')
-        while True:
+        is_running = True
+        while is_running:
             print("\nCustomer Dashboard\n")
             print("1. View Cars")
             print("2. Rentals Menu")
@@ -27,7 +29,7 @@ class CustomerCLI():
 
             if choice == '1':
                 self.view_available_cars()
-            if choice == '2':
+            elif choice == '2':
                 print('show rentals menu')
                 self.rentals_menu()
             elif choice == '3':
@@ -35,7 +37,7 @@ class CustomerCLI():
             elif choice == '4':
                 print(f'Logout successful. Goodbye, {self.current_user.username}!')
                 self.logout_callback()
-                continue
+                is_running = False
             else:
                 print("Invalid option. Please try again.")
 
@@ -46,7 +48,8 @@ class CustomerCLI():
             print("1. View Rentals")
             print("2. Book a Rental")
             print("3. Update Rental")
-            print("4. Exit")
+            print("4. Complete Rental")
+            print("5. Exit")
             choice = input("Choose an option: ")
 
             if choice == '1':
@@ -56,6 +59,8 @@ class CustomerCLI():
             elif choice == '3':
                 self.update_rental()
             elif choice == '4':
+                self.complete_rental()
+            elif choice == '5':
                 self.customer_dashboard()
                 continue
             else:
@@ -68,6 +73,7 @@ class CustomerCLI():
         print(f"Passport ID Number: {self.current_user.passport}")
         print(f"Username: {self.current_user.username}")
         print(f"Role: {self.current_user.role}")
+        print(f"Loyalty Points: {self.current_user.loyalty_points}")
 
     # car methods
     def view_available_cars(self):
@@ -181,3 +187,32 @@ class CustomerCLI():
                 print("Rental updated successfully.")
         except Exception as e:
             print(f"Failed to create rental: {e}")
+
+    def complete_rental(self):
+        os.system('clear')
+        try:
+            
+            self.view_all_rentals()
+
+            rental_id = sanitize_input(input("Enter Rental ID: "))
+
+            rental = self.rental_manager.get_rental_by_id(rental_id)
+            if not rental:
+                print("Rental not found.")
+                return
+            
+            if rental.status == RentalStatus.Pending or rental.status == RentalStatus.Rejected or rental.status == RentalStatus.Done or rental.status == RentalStatus.Cancelled:
+                print(f"Cannot complete rental with status {RentalStatus.get_status_name(rental.status)}.")
+                return
+            
+            confirm = input(f"Complete rental? (yes/no): ")
+
+            if (confirm.lower() == 'yes'):
+                self.rental_manager.update_rental_status(rental_id, RentalStatus.Done)
+                points_earned = UserFactory.calculate_loyalty_points(rental.cost)
+                self.user_manager.update_user_loyalty_points(self.current_user.user_id, points_earned)
+                self.car_manager.update_car_status(rental.car_id, True)
+                print("Rental completed successfully.")
+                return
+        except Exception as e:
+            print(f"Failed to complete rental: {e}")
